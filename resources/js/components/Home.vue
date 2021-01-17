@@ -1,23 +1,30 @@
 <template>
         <div class="w-full h-full flex flex-col items-center justify-evenly">
-            <label for="select"><select id="select" @change="change($event)">
+            <label for="select"><select id="select" @change="change($event)" class="focus:outline-none p-1">
                 <option value="CrudeRate">Crude Suicide Rates</option>
                 <option value="ExpectBirth">Expect Birth</option>
                 <option value="Doctor">Medical Doctors</option>
+                <option value="Nurse">Nurse and Mid-Wife</option>
+                <option value="Pharmacists">Pharmacists</option>
             </select></label>
-          <div class="w-full h-full flex flex-col">
-            <div class="flex w-full h-full justify-around">
-                <div id="container" class="w-5/12 h-0"></div>
-                <div id="container-1" class="w-5/12 h-0"></div>
+          <div class="w-full h-full flex">
+            <div class="flex flex-col w-1/2 h-full justify-around">
+                <div id="container" class="w-full h-1/2 p-4"></div>
+                <div id="container-1" class="w-full h-1/2 p-4"></div>
                 </div>
-              <div id="container-map" class="w-full h-full"></div>
+              <div class="w-1/2 h-full p-1 flex flex-col">
+               <div class="w-full flex justify-evenly my-1">
+                   <button v-for="i in currentPeriod" class="focus:outline-none" @click="ChangeMap(i);">{{i}}</button>
+               </div>
+                   <div class="w-full h-full p-1" id="map-container"></div>
+              </div>
           </div>
 
         </div>
 </template>
 
 <script>
-let barchart,column_chart;
+let barchart,column_chart,mapChart;
 import vClickOutside from 'v-click-outside'
 export default {
     directives: {
@@ -31,152 +38,70 @@ name: "Home",
           current:{
               Type:Object,
           },
+          currentPeriod:[],
           CrudeRate:{
               name:'',
               title:'',
               categories:[],
-              data:[
-                  {
-                      name:'Brunei Darussalam',
-                      data:[]
-                  },
-                  {
-                      name:'Cambodia',
-                      data:[]
-                  },
-                  {
-                      name:'Indonesia',
-                      data:[]
-                  },
-                  {
-                      name:'Lao People\'s Democratic Republic',
-                      data:[]
-                  },
-                  {
-                      name:'Malaysia',
-                      data:[]
-                  },{
-                      name:'Myanmar',
-                      data:[]
-                  },{
-                      name:'Philippines',
-                      data:[]
-                  },
-                  {
-                      name:'Singapore',
-                      data:[]
-                  },
-                  {
-                      name:'Thailand',
-                      data:[]
-                  },
-                  {
-                      name:'Viet Nam',
-                      data:[]
-                  },
-              ],
+              data:[],
+              mapData:[],
+              years:[],
           },
           Doctor:{
               name:'',
               title:'',
               categories:[],
-              data:[
-                  {
-                      name:'Brunei Darussalam',
-                      data:[]
-                  },
-                  {
-                      name:'Cambodia',
-                      data:[]
-                  },
-                  {
-                      name:'Indonesia',
-                      data:[]
-                  },
-                  {
-                      name:'Lao People\'s Democratic Republic',
-                      data:[]
-                  },
-                  {
-                      name:'Malaysia',
-                      data:[]
-                  },{
-                      name:'Myanmar',
-                      data:[]
-                  },{
-                      name:'Philippines',
-                      data:[]
-                  },
-                  {
-                      name:'Singapore',
-                      data:[]
-                  },
-                  {
-                      name:'Thailand',
-                      data:[]
-                  },
-                  {
-                      name:'Viet Nam',
-                      data:[]
-                  },
-              ],
+              data:[],
+              mapData:[],
+              years:[],
           },
+          Nurse:{
+              name:'',
+              title:'',
+              categories:[],
+              data:[],
+              mapData:[],
+              years:[],
+          },
+
           ExpectBirth:{
               name:'',
               title:'',
               categories:[],
-              data:[
-                  {
-                      name:'Brunei Darussalam',
-                      data:[]
-                  },
-                  {
-                      name:'Cambodia',
-                      data:[]
-                  },
-                  {
-                      name:'Indonesia',
-                      data:[]
-                  },
-                  {
-                      name:'Lao People\'s Democratic Republic',
-                      data:[]
-                  },
-                  {
-                      name:'Malaysia',
-                      data:[]
-                  },{
-                      name:'Myanmar',
-                      data:[]
-                  },{
-                      name:'Philippines',
-                      data:[]
-                  },
-                  {
-                      name:'Singapore',
-                      data:[]
-                  },
-                  {
-                      name:'Thailand',
-                      data:[]
-                  },
-                  {
-                      name:'Viet Nam',
-                      data:[]
-                  },
-              ],
+              data:[],
+              mapData:[],
+              years:[],
+          },
+          Pharmacists:{
+              name:'',
+              title:'',
+              categories:[],
+              data:[],
+              mapData:[],
+              years:[],
           },
       }
     },
     methods:{
+        ChangeMap(year){
+          console.log(this.current.mapData)
+                mapChart.series[0].setData(this.current.mapData[year],false);
+                mapChart.series[0].update({name:year},false);
+            mapChart.redraw(false);
+        },
         change(event){
             switch(event.target.value) {
                 case 'ExpectBirth': this.ChangeExpectBirthChart();break;
                 case 'CrudeRate'  : this.ChangeCrudeBirthChart();break;
                 case 'Doctor'     : this.ChangeDoctorChart();break;
+                case 'Nurse'      : this.ChangeNurseChart();break;
+                case 'Pharmacists': this.ChangePharmacistsChart();break;
             }
            },
         ChangeExpectBirthChart(){
+            this.current=this.ExpectBirth;
+            this.currentPeriod=this.ExpectBirth.years;
+            this.ChangeMap(this.currentPeriod[0]);
             for (let i = barchart.series.length-1; i>=0; i--) {
                 barchart.series[i].remove();
             }
@@ -201,6 +126,9 @@ name: "Home",
             column_chart.redraw(false);
         },
         ChangeCrudeBirthChart(){
+            this.current=this.CrudeRate;
+            this.currentPeriod=this.CrudeRate.years;
+            this.ChangeMap(this.currentPeriod[0]);
             for (let i = barchart.series.length-1; i>=0; i--) {
                 barchart.series[i].remove();
             }
@@ -226,6 +154,9 @@ name: "Home",
             column_chart.redraw(false);
         },
         ChangeDoctorChart(){
+            this.current=this.Doctor;
+            this.currentPeriod=this.Doctor.years;
+            this.ChangeMap(this.currentPeriod[0]);
             for (let i = barchart.series.length-1; i>=0; i--) {
                 barchart.series[i].remove();
             }
@@ -250,149 +181,138 @@ name: "Home",
             })
             column_chart.redraw(false);
         },
-      async ProcessCrudeRate(){
-           let data=await axios.post('/crude_rates').then(async(res)=>{
-               this.CrudeRate.categories=res.data.categories;
-               let data=res.data;
-                let result=await Object.keys(data.data).map((key)=>{
-                    this.CrudeRate.name=data.columns[data.columns.length-1];
-                    for (let k of data.data[key]) {
-                        this.CrudeRate.title=k.indicator;
-                        switch (k.location) {
-                            case 'Brunei Darussalam':
-                                this.CrudeRate.data[0].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case 'Cambodia':
-                                this.CrudeRate.data[1].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case 'Indonesia':
-                                this.CrudeRate.data[2].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Lao People's Democratic Republic":
-                                this.CrudeRate.data[3].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Malaysia":
-                                this.CrudeRate.data[4].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Myanmar":
-                                this.CrudeRate.data[5].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Philippines":
-                                this.CrudeRate.data[6].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Singapore":
-                                this.CrudeRate.data[7].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Thailand":
-                                this.CrudeRate.data[8].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Viet Nam":
-                                this.CrudeRate.data[9].data.push(parseFloat(k.Tooltip));
+        ChangeNurseChart(){
+            this.current=this.Nurse;
+            this.currentPeriod=this.Nurse.years;
+            this.ChangeMap(this.currentPeriod[0]);
+            for (let i = barchart.series.length-1; i>=0; i--) {
+                barchart.series[i].remove();
+            }
+            for (let y = this.Nurse.data.length-1; y >= 0; y--) {
+                barchart.addSeries(this.Nurse.data[y],false,false);
+            }
+            barchart.title.update({text: this.Nurse.title}, false);
+            barchart.xAxis[0].update({
+                categories:this.Nurse.categories,
+            })
+            barchart.redraw(false);
+            for (let i = column_chart.series.length-1; i>=0; i--) {
+                column_chart.series[i].remove();
+            }
+            for (let y = this.Nurse.data.length-1; y >= 0; y--) {
+                column_chart.addSeries(this.Nurse.data[y],false,false);
+            }
 
-                                break;
-                        }
-                    }
-                });
-                return result;
+            column_chart.title.update({text: this.Nurse.title}, false);
+            column_chart.xAxis[0].update({
+                categories:this.Nurse.categories,
             })
-           return data;
+            column_chart.redraw(false);
+        },
+        ChangePharmacistsChart(){
+            this.current=this.Pharmacists;
+            this.currentPeriod=this.Pharmacists.years;
+            this.ChangeMap(this.currentPeriod[0]);
+            for (let i = barchart.series.length-1; i>=0; i--) {
+                barchart.series[i].remove();
+            }
+            for (let y = this.Pharmacists.data.length-1; y >= 0; y--) {
+                barchart.addSeries(this.Pharmacists.data[y],false,false);
+            }
+            barchart.title.update({text: this.Pharmacists.title}, false);
+            barchart.xAxis[0].update({
+                categories:this.Pharmacists.categories,
+            })
+            barchart.redraw(false);
+            for (let i = column_chart.series.length-1; i>=0; i--) {
+                column_chart.series[i].remove();
+            }
+            for (let y = this.Pharmacists.data.length-1; y >= 0; y--) {
+                column_chart.addSeries(this.Pharmacists.data[y],false,false);
+            }
+
+            column_chart.title.update({text: this.Pharmacists.title}, false);
+            column_chart.xAxis[0].update({
+                categories:this.Pharmacists.categories,
+            })
+            column_chart.redraw(false);
+        },
+        async ProcessMapChart(data){
+            let array=[];
+            let country_code=['bn','kh','id','la','my','mm','ph','sg','th','vn'];
+            for(let index of data){
+                  let temp=[];
+
+                 for(let [i,value] of index.data.entries()){
+                     temp.push([country_code[i],value]);
+                 }
+                  array[index.name]=temp;
+              }
+            return array;
+        },
+      async ProcessCrudeRate(){
+          let data = await axios.post('crude_rates').then(async(res)=> {
+              this.CrudeRate.name=res.data.name;
+              this.CrudeRate.data=res.data.data;
+              this.CrudeRate.title=res.data.title;
+              this.CrudeRate.categories=res.data.categories;
+              this.CrudeRate.years=res.data.years;
+              this.CrudeRate.mapData=await this.ProcessMapChart(this.CrudeRate.data);
+              this.currentPeriod=this.CrudeRate.years;
+              return 'finish';
+          });
+          return 'finish';
          },
-       async ProcessExpectBirth(){
-          let data=await axios.post('/expect_births').then(async(res)=>{
-              this.ExpectBirth.categories=res.data.categories;
-              let data=res.data;
-                let result=await Object.keys(data.data).map((key)=>{
-                    this.ExpectBirth.name=data.columns[data.columns.length-1];
-                    for (let k of data.data[key]) {
-                        this.ExpectBirth.title=k.indicator;
-                        switch (k.location) {
-                            case 'Brunei Darussalam':
-                                this.ExpectBirth.data[0].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case 'Cambodia':
-                                this.ExpectBirth.data[1].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case 'Indonesia':
-                                this.ExpectBirth.data[2].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Lao People's Democratic Republic":
-                                this.ExpectBirth.data[3].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Malaysia":
-                                this.ExpectBirth.data[4].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Myanmar":
-                                this.ExpectBirth.data[5].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Philippines":
-                                this.ExpectBirth.data[6].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Singapore":
-                                this.ExpectBirth.data[7].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Thailand":
-                                this.ExpectBirth.data[8].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Viet Nam":
-                                this.ExpectBirth.data[9].data.push(parseFloat(k.Tooltip));
-                                break;
-                        }
-                    }
-                });
-                return result;
-            })
-             return data;
+        ProcessExpectBirth(){
+           axios.post('expect_births').then(async(res)=> {
+               this.ExpectBirth.name=res.data.name;
+               this.ExpectBirth.data=res.data.data;
+               this.ExpectBirth.title=res.data.title;
+               this.ExpectBirth.categories=res.data.categories;
+               this.ExpectBirth.years=res.data.years;
+               this.ExpectBirth.mapData=await this.ProcessMapChart(this.ExpectBirth.data);
+
+               return 'finish';
+           });
         },
-        async ProcessDoctor(){
-            let data=await axios.post('/doctors').then(async(res)=>{
-                this.Doctor.categories=res.data.categories;
-                let data=res.data;
-                let result=await Object.keys(data.data).map((key)=>{
-                    this.Doctor.name=data.columns[data.columns.length-1];
-                    for (let k of data.data[key]) {
-                        this.Doctor.title=k.indicator;
-                        switch (k.location) {
-                            case 'Brunei Darussalam':
-                                this.Doctor.data[0].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case 'Cambodia':
-                                this.Doctor.data[1].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case 'Indonesia':
-                                this.Doctor.data[2].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Lao People's Democratic Republic":
-                                this.Doctor.data[3].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Malaysia":
-                                this.Doctor.data[4].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Myanmar":
-                                this.Doctor.data[5].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Philippines":
-                                this.Doctor.data[6].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Singapore":
-                                this.Doctor.data[7].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Thailand":
-                                this.Doctor.data[8].data.push(parseFloat(k.Tooltip));
-                                break;
-                            case "Viet Nam":
-                                this.Doctor.data[9].data.push(parseFloat(k.Tooltip));
-                                break;
-                        }
-                    }
-                });
-                return result;
-            })
-            return data;
+        ProcessDoctor() {
+            axios.post('/doctors').then(async (res) => {
+                this.Doctor.name = res.data.name;
+                this.Doctor.data = res.data.data;
+                this.Doctor.title = res.data.title;
+                this.Doctor.categories = res.data.categories;
+                this.Doctor.years=res.data.years;
+                this.Doctor.mapData=await this.ProcessMapChart(this.Doctor.data);
+
+                return 'finish';
+            });
         },
-       async MakeHighChart(){
+        ProcessNurse(){
+            axios.post('nurses').then(async(res)=>{
+             this.Nurse.name=res.data.name;
+             this.Nurse.data=res.data.data;
+             this.Nurse.title=res.data.title;
+             this.Nurse.categories=res.data.categories;
+             this.Nurse.years=res.data.years;
+             this.Nurse.mapData=await this.ProcessMapChart(this.Nurse.data);
+             return 'finish';
+         });
+        },
+        ProcessPharmacists(){
+            axios.post('pharmacists').then(async(res)=>{
+                this.Pharmacists.name=res.data.name;
+                this.Pharmacists.data=res.data.data;
+                this.Pharmacists.title=res.data.title;
+                this.Pharmacists.categories=res.data.categories;
+                this.Pharmacists.years=res.data.years;
+                this.Pharmacists.mapData=await this.ProcessMapChart(this.Pharmacists.data);
+                return 'finish';
+            });
+        },
+        async MakeHighChart(){
             let result=await this.ProcessCrudeRate();
-           if(await result){
-                this.current=this.CrudeRate;
+            if(await result){
+               this.current=this.CrudeRate;
                barchart = Highcharts.chart('container', {
                     chart: {
                         type: 'column'
@@ -455,10 +375,7 @@ name: "Home",
                 });
             }
         },
-        UpdateChart(){
-
-        },
-        async Wait(){
+        async MapChart(){
             let data1 = await axios.post('asia').then(async(res)=>{
                 return res.data;
             });
@@ -472,12 +389,12 @@ name: "Home",
                 ['vn', 21],   //Vietnam - vn
                 ['kh', 25],      //Cambodia - kh
                 ['la', 38],     //Laos - la
-                ['bn', 43],    //Brunei - 43
+                ['bn', 43],    //Brunei - bn
             ];
 // Create the chart
            if(await data1) {
-               console.log(data1)
-               HighMaps.mapChart('container-map', {
+               console.log(this.currentPeriod);
+              mapChart =  HighMaps.mapChart('map-container', {
                    chart: {
                        map: asia_map,//asia_map
                    },
@@ -485,11 +402,6 @@ name: "Home",
                    title: {
                        text: 'Highmaps basic demo'
                    },
-
-                   subtitle: {
-                       text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/asia.js">Asia</a>'
-                   },
-
                    mapNavigation: {
                        enabled: true,
                        buttonOptions: {
@@ -502,8 +414,8 @@ name: "Home",
                    },
 
                    series: [{
-                       data: data,
-                       name: 'Random data',
+                       data: this.current.mapData[this.currentPeriod[0]],
+                       name: this.currentPeriod[0],
                        states: {
                            hover: {
                                color: '#BADA55'
@@ -512,19 +424,25 @@ name: "Home",
                    }]
                });
            }
+        },
+       async Render(){
+           await this.ProcessExpectBirth();
+          await this.ProcessDoctor();
+          await this.ProcessNurse();
+          await this.ProcessPharmacists();
+          await this.MapChart();
+            console.log('CrudeRate:',this.CrudeRate.mapData );
+            console.log('ExpectBirth:',this.ExpectBirth.mapData );
+            console.log('Doctor:',this.Doctor.mapData   );
+            console.log('Nurse:',this.Nurse.mapData );
+            console.log('Pharmacists:',this.Pharmacists.mapData );
+
         }
 
     },
    mounted(){
        this.MakeHighChart();
-       this.Wait();
-
-
-
-
-       this.ProcessExpectBirth();
-       this.ProcessDoctor();
-
+         this.Render();
    },
 }
 </script>

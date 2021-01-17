@@ -9,12 +9,42 @@ use Maatwebsite\Excel\Facades\Excel;
 class CrudeSuicideRateController extends Controller
 {
     public function get(){
-        $zero=CrudeSuicideRate::where('period','2000')->where('gender','Both sexes')->get();
-        $five=CrudeSuicideRate::where('period','2005')->where('gender','Both sexes')->get();
-        $ten=CrudeSuicideRate::where('period','2010')->where('gender','Both sexes')->get();
-        $fifteen=CrudeSuicideRate::where('period','2015')->where('gender','Both sexes')->get();
-        $sixteen=CrudeSuicideRate::where('period','2016')->where('gender','Both sexes')->get();
-        return ['data'=>['zero'=>$zero,'five'=>$five,'ten'=>$ten,'fifteen'=>$fifteen,'sixteen'=>$sixteen],'columns'=>array_slice(\Schema::getColumnListing('crude_suicide_rates'),1),'categories'=>['2000','2005','2010','2015','2016']];
+        $periods=CrudeSuicideRate::distinct()->inRandomOrder()->get(['period'])->take(5);
+        $years=[];
+        foreach ($periods->sort() as $period){
+            $years[]=$period->period;
+        }
+        $countries=['Brunei Darussalam','Cambodia','Indonesia',
+            "Lao People's Democratic Republic",'Malaysia','Myanmar'
+            ,'Philippines','Singapore','Thailand','Viet Nam'];
+        $formatted_countries=[];
+        $i=0;
+        foreach($years as $year){
+            $array=[];
+            foreach ($countries as $country){
+                $temp=CrudeSuicideRate::where(['location'=>$country,'period'=>$year,'gender'=>'Both sexes'])->first();
+                if($temp!==null){
+                    $array[]= (float)$temp->Tooltip;
+                    $name=$temp->indicator;
+                }
+                else{
+                    $array[]=null;
+                }
+            }
+
+            $formatted_countries[$i]=[
+                'name'=>$year,
+                'connectNulls'=>true,
+                'data'=>$array];
+            $i++;
+        }
+        return [
+            'data'=>$formatted_countries,
+            'title'=>$name,
+            'categories'=>$countries,
+            'name'=>'ToolTip',
+            'years'=>$years,
+        ];
     }
     public function import(){
         return Excel::import(new \App\Imports\CrudeSuicideRateImport, public_path().'\assets\CrudeSuicide.xlsx');
