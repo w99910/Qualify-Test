@@ -6,6 +6,8 @@
 
 require('./bootstrap');
 window.Highcharts = require('highcharts');
+window.HighMaps=require('highcharts/highmaps.js');
+window.asia_map=require('@highcharts/map-collection/custom/asia.geo.json');
 window.Vue = require('vue').default;
 
 /**

@@ -3,12 +3,16 @@
             <label for="select"><select id="select" @change="change($event)">
                 <option value="CrudeRate">Crude Suicide Rates</option>
                 <option value="ExpectBirth">Expect Birth</option>
+                <option value="Doctor">Medical Doctors</option>
             </select></label>
-          <div class="w-full h-full">
+          <div class="w-full h-full flex flex-col">
             <div class="flex w-full h-full justify-around">
-                <div id="container" class="w-5/12 h-full"></div>
-                <div id="container-1" class="w-5/12 h-full"></div></div>
+                <div id="container" class="w-5/12 h-0"></div>
+                <div id="container-1" class="w-5/12 h-0"></div>
+                </div>
+              <div id="container-map" class="w-full h-full"></div>
           </div>
+
         </div>
 </template>
 
@@ -28,6 +32,51 @@ name: "Home",
               Type:Object,
           },
           CrudeRate:{
+              name:'',
+              title:'',
+              categories:[],
+              data:[
+                  {
+                      name:'Brunei Darussalam',
+                      data:[]
+                  },
+                  {
+                      name:'Cambodia',
+                      data:[]
+                  },
+                  {
+                      name:'Indonesia',
+                      data:[]
+                  },
+                  {
+                      name:'Lao People\'s Democratic Republic',
+                      data:[]
+                  },
+                  {
+                      name:'Malaysia',
+                      data:[]
+                  },{
+                      name:'Myanmar',
+                      data:[]
+                  },{
+                      name:'Philippines',
+                      data:[]
+                  },
+                  {
+                      name:'Singapore',
+                      data:[]
+                  },
+                  {
+                      name:'Thailand',
+                      data:[]
+                  },
+                  {
+                      name:'Viet Nam',
+                      data:[]
+                  },
+              ],
+          },
+          Doctor:{
               name:'',
               title:'',
               categories:[],
@@ -120,45 +169,87 @@ name: "Home",
       }
     },
     methods:{
-       async change(event){
+        change(event){
             switch(event.target.value) {
-                case 'ExpectBirth':
-                    for (let i = barchart.series.length-1; i>=0; i--) {
-                        barchart.series[i].remove();
-                    }
-                    for (let y = this.ExpectBirth.data.length-1; y >= 0; y--) {
-                        barchart.addSeries(this.ExpectBirth.data[y],false,false);
-                    }
-                    barchart.title.update({text: this.ExpectBirth.title}, false);
-                 let finish = await barchart.redraw(false);
-                    for (let i = column_chart.series.length-1; i>=0; i--) {
-                        column_chart.series[i].remove();
-                    }
-                    for (let y = this.ExpectBirth.data.length-1; y >= 0; y--) {
-                        column_chart.addSeries(this.ExpectBirth.data[y],false,false);
-                    }
-                    column_chart.title.update({text: this.ExpectBirth.title}, false);
-                    column_chart.redraw(false);break;
-            case 'CrudeRate':
-                for (let i = barchart.series.length-1; i>=0; i--) {
-                    barchart.series[i].remove();
-                }
-                for (let y = this.CrudeRate.data.length-1; y >= 0; y--) {
-                    barchart.addSeries(this.CrudeRate.data[y],false,false);
-                }
-                barchart.title.update({text: this.CrudeRate.title}, false);
-                barchart.redraw(false);
-                for (let i = column_chart.series.length-1; i>=0; i--) {
-                    column_chart.series[i].remove();
-                }
-                for (let y = this.CrudeRate.data.length-1; y >= 0; y--) {
-                    column_chart.addSeries(this.CrudeRate.data[y],false,false);
-                }
-
-                column_chart.title.update({text: this.ExpectBirth.title}, false);
-                column_chart.redraw(false);break;
+                case 'ExpectBirth': this.ChangeExpectBirthChart();break;
+                case 'CrudeRate'  : this.ChangeCrudeBirthChart();break;
+                case 'Doctor'     : this.ChangeDoctorChart();break;
             }
            },
+        ChangeExpectBirthChart(){
+            for (let i = barchart.series.length-1; i>=0; i--) {
+                barchart.series[i].remove();
+            }
+            for (let y = this.ExpectBirth.data.length-1; y >= 0; y--) {
+                barchart.addSeries(this.ExpectBirth.data[y],false,false);
+            }
+            barchart.title.update({text: this.ExpectBirth.title}, false);
+            barchart.xAxis[0].update({
+                categories:this.ExpectBirth.categories,
+            })
+            barchart.redraw(false);
+            for (let i = column_chart.series.length-1; i>=0; i--) {
+                column_chart.series[i].remove();
+            }
+            for (let y = this.ExpectBirth.data.length-1; y >= 0; y--) {
+                column_chart.addSeries(this.ExpectBirth.data[y],false,false);
+            }
+            column_chart.title.update({text: this.ExpectBirth.title}, false);
+            column_chart.xAxis[0].update({
+                categories:this.ExpectBirth.categories,
+            })
+            column_chart.redraw(false);
+        },
+        ChangeCrudeBirthChart(){
+            for (let i = barchart.series.length-1; i>=0; i--) {
+                barchart.series[i].remove();
+            }
+            for (let y = this.CrudeRate.data.length-1; y >= 0; y--) {
+                barchart.addSeries(this.CrudeRate.data[y],false,false);
+            }
+            barchart.title.update({text: this.CrudeRate.title}, false);
+            barchart.xAxis[0].update({
+                categories:this.CrudeRate.categories,
+            })
+            barchart.redraw(false);
+            for (let i = column_chart.series.length-1; i>=0; i--) {
+                column_chart.series[i].remove();
+            }
+            for (let y = this.CrudeRate.data.length-1; y >= 0; y--) {
+                column_chart.addSeries(this.CrudeRate.data[y],false,false);
+            }
+
+            column_chart.title.update({text: this.CrudeRate.title}, false);
+            column_chart.xAxis[0].update({
+                categories:this.CrudeRate.categories,
+            })
+            column_chart.redraw(false);
+        },
+        ChangeDoctorChart(){
+            for (let i = barchart.series.length-1; i>=0; i--) {
+                barchart.series[i].remove();
+            }
+            for (let y = this.Doctor.data.length-1; y >= 0; y--) {
+                barchart.addSeries(this.Doctor.data[y],false,false);
+            }
+            barchart.title.update({text: this.Doctor.title}, false);
+            barchart.xAxis[0].update({
+                categories:this.Doctor.categories,
+            })
+            barchart.redraw(false);
+            for (let i = column_chart.series.length-1; i>=0; i--) {
+                column_chart.series[i].remove();
+            }
+            for (let y = this.Doctor.data.length-1; y >= 0; y--) {
+                column_chart.addSeries(this.Doctor.data[y],false,false);
+            }
+
+            column_chart.title.update({text: this.Doctor.title}, false);
+            column_chart.xAxis[0].update({
+                categories:this.Doctor.categories,
+            })
+            column_chart.redraw(false);
+        },
       async ProcessCrudeRate(){
            let data=await axios.post('/crude_rates').then(async(res)=>{
                this.CrudeRate.categories=res.data.categories;
@@ -252,6 +343,52 @@ name: "Home",
             })
              return data;
         },
+        async ProcessDoctor(){
+            let data=await axios.post('/doctors').then(async(res)=>{
+                this.Doctor.categories=res.data.categories;
+                let data=res.data;
+                let result=await Object.keys(data.data).map((key)=>{
+                    this.Doctor.name=data.columns[data.columns.length-1];
+                    for (let k of data.data[key]) {
+                        this.Doctor.title=k.indicator;
+                        switch (k.location) {
+                            case 'Brunei Darussalam':
+                                this.Doctor.data[0].data.push(parseFloat(k.Tooltip));
+                                break;
+                            case 'Cambodia':
+                                this.Doctor.data[1].data.push(parseFloat(k.Tooltip));
+                                break;
+                            case 'Indonesia':
+                                this.Doctor.data[2].data.push(parseFloat(k.Tooltip));
+                                break;
+                            case "Lao People's Democratic Republic":
+                                this.Doctor.data[3].data.push(parseFloat(k.Tooltip));
+                                break;
+                            case "Malaysia":
+                                this.Doctor.data[4].data.push(parseFloat(k.Tooltip));
+                                break;
+                            case "Myanmar":
+                                this.Doctor.data[5].data.push(parseFloat(k.Tooltip));
+                                break;
+                            case "Philippines":
+                                this.Doctor.data[6].data.push(parseFloat(k.Tooltip));
+                                break;
+                            case "Singapore":
+                                this.Doctor.data[7].data.push(parseFloat(k.Tooltip));
+                                break;
+                            case "Thailand":
+                                this.Doctor.data[8].data.push(parseFloat(k.Tooltip));
+                                break;
+                            case "Viet Nam":
+                                this.Doctor.data[9].data.push(parseFloat(k.Tooltip));
+                                break;
+                        }
+                    }
+                });
+                return result;
+            })
+            return data;
+        },
        async MakeHighChart(){
             let result=await this.ProcessCrudeRate();
            if(await result){
@@ -320,11 +457,73 @@ name: "Home",
         },
         UpdateChart(){
 
+        },
+        async Wait(){
+            let data1 = await axios.post('asia').then(async(res)=>{
+                return res.data;
+            });
+            var data = [
+                ['ph', 1],   //Philippines - ph
+                ['th', 5],  // Thailand -th
+                ['mm', 13],  //myanmar - mm
+                ['id', 14],  //indonesia - id
+                ['sg', 15],   //singapore -sg
+                ['my', 18],  //Malaysia - my
+                ['vn', 21],   //Vietnam - vn
+                ['kh', 25],      //Cambodia - kh
+                ['la', 38],     //Laos - la
+                ['bn', 43],    //Brunei - 43
+            ];
+// Create the chart
+           if(await data1) {
+               console.log(data1)
+               HighMaps.mapChart('container-map', {
+                   chart: {
+                       map: asia_map,//asia_map
+                   },
+
+                   title: {
+                       text: 'Highmaps basic demo'
+                   },
+
+                   subtitle: {
+                       text: 'Source map: <a href="http://code.highcharts.com/mapdata/custom/asia.js">Asia</a>'
+                   },
+
+                   mapNavigation: {
+                       enabled: true,
+                       buttonOptions: {
+                           verticalAlign: 'bottom'
+                       }
+                   },
+
+                   colorAxis: {
+                       min: 0
+                   },
+
+                   series: [{
+                       data: data,
+                       name: 'Random data',
+                       states: {
+                           hover: {
+                               color: '#BADA55'
+                           }
+                       },
+                   }]
+               });
+           }
         }
+
     },
    mounted(){
        this.MakeHighChart();
+       this.Wait();
+
+
+
+
        this.ProcessExpectBirth();
+       this.ProcessDoctor();
 
    },
 }
