@@ -36539,7 +36539,7 @@ var render = function() {
         "div",
         {
           staticClass:
-            "absolute top-0 left-0 bg-white dark:bg-dark-secondary header w-full justify-between items-center flex sm:px-3 px-4 py-2 sm:py-4"
+            "absolute top-0 border-b-2 border-gray-600 left-0 bg-white dark:bg-dark-secondary header w-full justify-between items-center flex sm:px-3 px-4 py-2 sm:py-4"
         },
         [
           _c(
