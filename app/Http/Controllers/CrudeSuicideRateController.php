@@ -9,7 +9,7 @@ use Maatwebsite\Excel\Facades\Excel;
 class CrudeSuicideRateController extends Controller
 {
     public function get(){
-        $periods=CrudeSuicideRate::distinct()->inRandomOrder()->get(['period'])->take(5);
+        $periods=CrudeSuicideRate::distinct()->get(['period'])->shuffle()->take(5);
         $years=[];
         foreach ($periods->sort() as $period){
             $years[]=$period->period;

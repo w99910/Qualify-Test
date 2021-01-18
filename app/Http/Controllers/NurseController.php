@@ -9,7 +9,7 @@ use Maatwebsite\Excel\Facades\Excel;
 class NurseController extends Controller
 {
     public function get(){
-        $periods=Nurse::distinct()->inRandomOrder()->get(['period'])->take(5);
+        $periods=Nurse::distinct()->get(['period'])->shuffle()->take(5);
         $years=[];
         foreach ($periods->sortDesc() as $period){
             $years[]=$period->period;
