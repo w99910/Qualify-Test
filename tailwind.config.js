@@ -1,8 +1,18 @@
 module.exports = {
   purge: [],
-  darkMode: false, // or 'media' or 'class'
+  darkMode: 'class', // or 'media' or 'class'
   theme: {
-    extend: {},
+    extend: {
+        fontFamily:{
+            'poppins':['Poppins']
+        },
+        colors:{
+          'primary':'#F3F3F3',
+            'dark-primary':'#272D33',
+            'dark-secondary':'#383C40',
+            'dark-white':'#E5E1DD',
+        },
+    },
   },
   variants: {
     extend: {},

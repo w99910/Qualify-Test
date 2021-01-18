@@ -6,7 +6,22 @@
 
 require('./bootstrap');
 window.Highcharts = require('highcharts');
+Highcharts.setOptions({
+           chart:{
+               style:{
+                   fontFamily:'poppins'
+               }
+           }
+})
+
 window.HighMaps=require('highcharts/highmaps.js');
+HighMaps.setOptions({
+    chart:{
+        style:{
+            fontFamily:'poppins',
+        }
+    }
+})
 window.asia_map=require('@highcharts/map-collection/custom/asia.geo.json');
 window.Vue = require('vue').default;
 
