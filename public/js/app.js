@@ -2040,7 +2040,6 @@ var barchart, column_chart, mapChart;
   methods: {
     ChangeMap: function ChangeMap(year) {
       this.currentYear = year;
-      console.log(this.current.mapData);
       mapChart.series[0].setData(this.current.mapData[year], false);
       mapChart.series[0].update({
         name: year
@@ -2646,12 +2645,11 @@ var barchart, column_chart, mapChart;
 
               case 6:
                 if (!_context10.sent) {
-                  _context10.next = 10;
+                  _context10.next = 9;
                   break;
                 }
 
                 _this7.waitMapChart = false;
-                console.log(_this7.currentPeriod);
                 mapChart = HighMaps.mapChart('map-container', {
                   chart: {
                     map: asia_map,
@@ -2681,7 +2679,7 @@ var barchart, column_chart, mapChart;
                   }]
                 });
 
-              case 10:
+              case 9:
               case "end":
                 return _context10.stop();
             }
@@ -2717,13 +2715,6 @@ var barchart, column_chart, mapChart;
                 return _this8.MapChart();
 
               case 10:
-                console.log('CrudeRate:', _this8.CrudeRate.mapData);
-                console.log('ExpectBirth:', _this8.ExpectBirth.mapData);
-                console.log('Doctor:', _this8.Doctor.mapData);
-                console.log('Nurse:', _this8.Nurse.mapData);
-                console.log('Pharmacists:', _this8.Pharmacists.mapData);
-
-              case 15:
               case "end":
                 return _context11.stop();
             }

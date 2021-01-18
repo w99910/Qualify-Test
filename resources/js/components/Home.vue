@@ -114,7 +114,6 @@ name: "Home",
     methods:{
         ChangeMap(year){
             this.currentYear=year;
-          console.log(this.current.mapData)
                 mapChart.series[0].setData(this.current.mapData[year],false);
                 mapChart.series[0].update({name:year},false);
                 mapChart.title.update({
@@ -432,7 +431,6 @@ name: "Home",
 // Create the chart
            if(await data1) {
                this.waitMapChart=false;
-               console.log(this.currentPeriod);
               mapChart = HighMaps.mapChart('map-container', {
                    chart: {
                        map: asia_map,//asia_map
@@ -471,13 +469,7 @@ name: "Home",
           await this.ProcessNurse();
           await this.ProcessPharmacists();
           await this.MapChart();
-            console.log('CrudeRate:',this.CrudeRate.mapData );
-            console.log('ExpectBirth:',this.ExpectBirth.mapData );
-            console.log('Doctor:',this.Doctor.mapData   );
-            console.log('Nurse:',this.Nurse.mapData );
-            console.log('Pharmacists:',this.Pharmacists.mapData );
-
-        }
+       }
 
     },
     created(){
