@@ -46,7 +46,15 @@ class CrudeSuicideRateController extends Controller
             'years'=>$years,
         ];
     }
-    public function import(){
-        return Excel::import(new \App\Imports\CrudeSuicideRateImport, public_path().'\assets\CrudeSuicide.xlsx');
+    public function import(Request $req){
+        $validator=\Validator::make([
+            'file'=>$req->file,
+            'extension'=>strtolower($req->file->getClientOriginalExtension())
+        ],[
+           'file'=>'required',
+           'extension'=>'required|in:csv,xlsx'
+        ]);
+        Excel::import(new \App\Imports\CrudeSuicideRateImport,$req->file );
+      return redirect()->back()->with(['message'=>' Crude Success']);
     }
 }

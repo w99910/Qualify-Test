@@ -46,8 +46,15 @@ class ExpectBirthController extends Controller
             'years'=>$years,
         ];
     }
-    public function import(){
-        Excel::import(new \App\Imports\ExpectBirths, public_path().'\assets\lifeExpectancyAtBirth.xlsx');
-       dd('success');
+    public function import(Request $req){
+        $validator=\Validator::make([
+            'file'=>$req->file,
+            'extension'=>strtolower($req->file->getClientOriginalExtension())
+        ],[
+            'file'=>'required',
+            'extension'=>'required|in:csv,xlsx'
+        ]);
+        Excel::import(new \App\Imports\ExpectBirths, $req->file);
+        return redirect()->back()->with(['message'=>'Success Expect']);
     }
 }
