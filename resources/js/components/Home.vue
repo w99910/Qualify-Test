@@ -288,7 +288,9 @@ name: "Home",
             return array;
         },
       async ProcessCrudeRate(){
+          this.pageLoading=false;
           let data = await axios.post('crude_rates').then(async(res)=> {
+
               this.CrudeRate.name=res.data.name;
               this.CrudeRate.data=res.data.data;
               this.CrudeRate.title=res.data.title;
@@ -622,7 +624,6 @@ name: "Home",
         }
     },
    mounted(){
-       this.pageLoading=false;
        this.MakeHighChart();
        this.Render();
    },

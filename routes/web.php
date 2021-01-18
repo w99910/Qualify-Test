@@ -32,7 +32,9 @@ Route::post('/nurses/import',[App\Http\Controllers\NurseController::class,'impor
 Route::post('/nurses',[App\Http\Controllers\NurseController::class,'get']);
 
 Route::post('/asia',function(){
-   $asia=file_get_contents(public_path().'/assets/asia.geojson');
+   $asia=cache()->remember('asia',200,function(){
+       return file_get_contents(public_path().'/assets/asia.geojson');
+   });
    return $asia;
 });
 Route::view('/import','import');

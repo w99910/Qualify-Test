@@ -2318,7 +2318,8 @@ var barchart, column_chart, mapChart;
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                _context3.next = 2;
+                _this.pageLoading = false;
+                _context3.next = 3;
                 return axios.post('crude_rates').then( /*#__PURE__*/function () {
                   var _ref = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2(res) {
                     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee2$(_context2) {
@@ -2356,11 +2357,11 @@ var barchart, column_chart, mapChart;
                   };
                 }());
 
-              case 2:
+              case 3:
                 data = _context3.sent;
                 return _context3.abrupt("return", 'finish');
 
-              case 4:
+              case 5:
               case "end":
                 return _context3.stop();
             }
@@ -2883,7 +2884,6 @@ var barchart, column_chart, mapChart;
     }
   },
   mounted: function mounted() {
-    this.pageLoading = false;
     this.MakeHighChart();
     this.Render();
   }
