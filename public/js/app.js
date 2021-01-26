@@ -1908,6 +1908,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var v_click_outside__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(v_click_outside__WEBPACK_IMPORTED_MODULE_1__);
 
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -1922,65 +1926,69 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+var barchart, column_chart, mapChart, pieChart;
 
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+function between(x, min, max) {
+  return x >= min && x <= max;
+}
 
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-var barchart, column_chart, mapChart;
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   directives: {
@@ -2000,13 +2008,16 @@ var barchart, column_chart, mapChart;
       waitMapChart: true,
       currentPeriod: [],
       currentYear: '',
+      firstTime: true,
+      showPie: false,
       CrudeRate: {
         name: '',
         title: '',
         categories: [],
         data: [],
         mapData: [],
-        years: []
+        years: [],
+        genderData: []
       },
       Doctor: {
         name: '',
@@ -2014,7 +2025,10 @@ var barchart, column_chart, mapChart;
         categories: [],
         data: [],
         mapData: [],
-        years: []
+        years: [],
+        genderData: [],
+        pieData: [],
+        drillDown: []
       },
       Nurse: {
         name: '',
@@ -2022,7 +2036,10 @@ var barchart, column_chart, mapChart;
         categories: [],
         data: [],
         mapData: [],
-        years: []
+        years: [],
+        genderData: [],
+        pieData: [],
+        drillDown: []
       },
       ExpectBirth: {
         name: '',
@@ -2030,7 +2047,8 @@ var barchart, column_chart, mapChart;
         categories: [],
         data: [],
         mapData: [],
-        years: []
+        years: [],
+        genderData: []
       },
       Pharmacists: {
         name: '',
@@ -2038,12 +2056,15 @@ var barchart, column_chart, mapChart;
         categories: [],
         data: [],
         mapData: [],
-        years: []
+        years: [],
+        genderData: [],
+        pieData: [],
+        drillDown: []
       }
     };
   },
   methods: {
-    ChangeMap: function ChangeMap(year) {
+    ChangeMap: function ChangeMap(year, index) {
       this.currentYear = year;
       mapChart.series[0].setData(this.current.mapData[year], false);
       mapChart.series[0].update({
@@ -2053,6 +2074,87 @@ var barchart, column_chart, mapChart;
         text: this.current.title
       }, false);
       mapChart.redraw(false);
+      mapChart.series[0].data[5].graphic.attr({
+        'stroke-width': 3.5
+      }, false);
+      mapChart.redraw(false);
+
+      if (this.current.genderData.length !== 0) {
+        for (var i = barchart.series.length - 1; i >= 0; i--) {
+          barchart.series[i].remove();
+        }
+
+        for (var y = this.current.genderData[year].length - 1; y >= 0; y--) {
+          barchart.addSeries(this.current.genderData[year][y], false, false);
+        }
+
+        barchart.title.update({
+          text: this.current.title + "(".concat(this.currentYear, ")")
+        }, false);
+        barchart.redraw(false);
+      }
+
+      if (index <= this.currentPeriod.length) {
+        pieChart.drillUp();
+        pieChart.series[0].data[parseInt(index)].doDrilldown(false);
+        pieChart.title.update({
+          text: this.current.title + "(".concat(this.currentYear, ")")
+        }, false);
+        pieChart.redraw(false);
+        var array = [];
+
+        var _iterator = _createForOfIteratorHelper(this.currentPeriod.entries()),
+            _step;
+
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var _step$value = _slicedToArray(_step.value, 2),
+                _index = _step$value[0],
+                value = _step$value[1];
+
+            array.push(_index);
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
+        }
+
+        var filter = array.filter(function (a) {
+          return a !== index;
+        });
+
+        var _iterator2 = _createForOfIteratorHelper(array.reverse()),
+            _step2;
+
+        try {
+          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+            var _i2 = _step2.value;
+
+            column_chart.series[_i2].show();
+          }
+        } catch (err) {
+          _iterator2.e(err);
+        } finally {
+          _iterator2.f();
+        }
+
+        var _iterator3 = _createForOfIteratorHelper(filter.reverse()),
+            _step3;
+
+        try {
+          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+            var _i3 = _step3.value;
+
+            column_chart.series[_i3].hide(); // pieChart.series[0].data[i].hide();
+
+          }
+        } catch (err) {
+          _iterator3.e(err);
+        } finally {
+          _iterator3.f();
+        }
+      }
     },
     change: function change(event) {
       switch (event.target.value) {
@@ -2078,28 +2180,29 @@ var barchart, column_chart, mapChart;
       }
     },
     ChangeExpectBirthChart: function ChangeExpectBirthChart() {
+      this.showPie = false;
       this.current = this.ExpectBirth;
       this.currentPeriod = this.ExpectBirth.years;
-      this.ChangeMap(this.currentPeriod[0]);
+      this.ChangeMap(this.currentPeriod[0], this.currentPeriod.length + 2);
 
       for (var i = barchart.series.length - 1; i >= 0; i--) {
         barchart.series[i].remove();
       }
 
-      for (var y = this.ExpectBirth.data.length - 1; y >= 0; y--) {
-        barchart.addSeries(this.ExpectBirth.data[y], false, false);
+      for (var y = this.ExpectBirth.genderData[this.currentPeriod[0]].length - 1; y >= 0; y--) {
+        barchart.addSeries(this.ExpectBirth.genderData[this.currentPeriod[0]][y], false, false);
       }
 
       barchart.title.update({
-        text: this.ExpectBirth.title
+        text: this.current.title + "(".concat(this.currentYear, ")")
       }, false);
       barchart.xAxis[0].update({
         categories: this.ExpectBirth.categories
       });
       barchart.redraw(false);
 
-      for (var _i = column_chart.series.length - 1; _i >= 0; _i--) {
-        column_chart.series[_i].remove();
+      for (var _i4 = column_chart.series.length - 1; _i4 >= 0; _i4--) {
+        column_chart.series[_i4].remove();
       }
 
       for (var _y = this.ExpectBirth.data.length - 1; _y >= 0; _y--) {
@@ -2115,28 +2218,30 @@ var barchart, column_chart, mapChart;
       column_chart.redraw(false);
     },
     ChangeCrudeBirthChart: function ChangeCrudeBirthChart() {
+      this.showPie = false;
       this.current = this.CrudeRate;
-      this.currentPeriod = this.CrudeRate.years;
-      this.ChangeMap(this.currentPeriod[0]);
+      this.currentPeriod = this.firstTime ? this.CrudeRate.years.reverse() : this.CrudeRate.years;
+      this.firstTime = false;
+      this.ChangeMap(this.currentPeriod[0], this.currentPeriod.length + 2);
 
       for (var i = barchart.series.length - 1; i >= 0; i--) {
         barchart.series[i].remove();
       }
 
-      for (var y = this.CrudeRate.data.length - 1; y >= 0; y--) {
-        barchart.addSeries(this.CrudeRate.data[y], false, false);
+      for (var y = this.CrudeRate.genderData[this.currentPeriod[0]].length - 1; y >= 0; y--) {
+        barchart.addSeries(this.CrudeRate.genderData[this.currentPeriod[0]][y], false, false);
       }
 
       barchart.title.update({
-        text: this.CrudeRate.title
+        text: this.current.title + "(".concat(this.currentYear, ")")
       }, false);
       barchart.xAxis[0].update({
         categories: this.CrudeRate.categories
       });
       barchart.redraw(false);
 
-      for (var _i2 = column_chart.series.length - 1; _i2 >= 0; _i2--) {
-        column_chart.series[_i2].remove();
+      for (var _i5 = column_chart.series.length - 1; _i5 >= 0; _i5--) {
+        column_chart.series[_i5].remove();
       }
 
       for (var _y2 = this.CrudeRate.data.length - 1; _y2 >= 0; _y2--) {
@@ -2152,12 +2257,14 @@ var barchart, column_chart, mapChart;
       column_chart.redraw(false);
     },
     ChangeDoctorChart: function ChangeDoctorChart() {
+      this.showPie = true;
       this.current = this.Doctor;
       this.currentPeriod = this.Doctor.years;
-      this.ChangeMap(this.currentPeriod[0]);
+      pieChart.drillUp();
+      this.ChangeMap(this.currentPeriod[0], this.currentPeriod.length + 2);
 
-      for (var i = barchart.series.length - 1; i >= 0; i--) {
-        barchart.series[i].remove();
+      for (var _i6 = barchart.series.length - 1; _i6 >= 0; _i6--) {
+        barchart.series[_i6].remove();
       }
 
       for (var y = this.Doctor.data.length - 1; y >= 0; y--) {
@@ -2171,9 +2278,28 @@ var barchart, column_chart, mapChart;
         categories: this.Doctor.categories
       });
       barchart.redraw(false);
+      pieChart.series[0].setData(this.current.pieData, false);
+      pieChart.options.drilldown.series = this.current.drillDown;
+      var ddCurrent = pieChart.series[0].userOptions.id;
+      var ddSeries = pieChart.options.drilldown.series;
 
-      for (var _i3 = column_chart.series.length - 1; _i3 >= 0; _i3--) {
-        column_chart.series[_i3].remove();
+      if (ddCurrent === undefined) {
+        pieChart.series[0].setData(pieChart.options.series[0].data);
+      } else {
+        for (var i = 0, ie = ddSeries.length; i < ie; ++i) {
+          if (ddSeries[i].id === ddCurrent) {
+            pieChart.series[0].setData(ddSeries[i].data);
+          }
+        }
+      }
+
+      pieChart.title.update({
+        text: this.current.title
+      }, false);
+      pieChart.redraw(false);
+
+      for (var _i7 = column_chart.series.length - 1; _i7 >= 0; _i7--) {
+        column_chart.series[_i7].remove();
       }
 
       for (var _y3 = this.Doctor.data.length - 1; _y3 >= 0; _y3--) {
@@ -2189,12 +2315,14 @@ var barchart, column_chart, mapChart;
       column_chart.redraw(false);
     },
     ChangeNurseChart: function ChangeNurseChart() {
+      this.showPie = true;
       this.current = this.Nurse;
       this.currentPeriod = this.Nurse.years;
-      this.ChangeMap(this.currentPeriod[0]);
+      pieChart.drillUp();
+      this.ChangeMap(this.currentPeriod[0], this.currentPeriod.length + 2);
 
-      for (var i = barchart.series.length - 1; i >= 0; i--) {
-        barchart.series[i].remove();
+      for (var _i8 = barchart.series.length - 1; _i8 >= 0; _i8--) {
+        barchart.series[_i8].remove();
       }
 
       for (var y = this.Nurse.data.length - 1; y >= 0; y--) {
@@ -2208,9 +2336,28 @@ var barchart, column_chart, mapChart;
         categories: this.Nurse.categories
       });
       barchart.redraw(false);
+      pieChart.series[0].setData(this.current.pieData, false);
+      pieChart.options.drilldown.series = this.current.drillDown;
+      var ddCurrent = pieChart.series[0].userOptions.id;
+      var ddSeries = pieChart.options.drilldown.series;
 
-      for (var _i4 = column_chart.series.length - 1; _i4 >= 0; _i4--) {
-        column_chart.series[_i4].remove();
+      if (ddCurrent === undefined) {
+        pieChart.series[0].setData(pieChart.options.series[0].data);
+      } else {
+        for (var i = 0, ie = ddSeries.length; i < ie; ++i) {
+          if (ddSeries[i].id === ddCurrent) {
+            pieChart.series[0].setData(ddSeries[i].data);
+          }
+        }
+      }
+
+      pieChart.title.update({
+        text: this.current.title
+      }, false);
+      pieChart.redraw(false);
+
+      for (var _i9 = column_chart.series.length - 1; _i9 >= 0; _i9--) {
+        column_chart.series[_i9].remove();
       }
 
       for (var _y4 = this.Nurse.data.length - 1; _y4 >= 0; _y4--) {
@@ -2226,12 +2373,14 @@ var barchart, column_chart, mapChart;
       column_chart.redraw(false);
     },
     ChangePharmacistsChart: function ChangePharmacistsChart() {
+      this.showPie = true;
       this.current = this.Pharmacists;
       this.currentPeriod = this.Pharmacists.years;
-      this.ChangeMap(this.currentPeriod[0]);
+      pieChart.drillUp();
+      this.ChangeMap(this.currentPeriod[0], this.currentPeriod.length + 2);
 
-      for (var i = barchart.series.length - 1; i >= 0; i--) {
-        barchart.series[i].remove();
+      for (var _i10 = barchart.series.length - 1; _i10 >= 0; _i10--) {
+        barchart.series[_i10].remove();
       }
 
       for (var y = this.Pharmacists.data.length - 1; y >= 0; y--) {
@@ -2245,9 +2394,28 @@ var barchart, column_chart, mapChart;
         categories: this.Pharmacists.categories
       });
       barchart.redraw(false);
+      pieChart.series[0].setData(this.current.pieData, false);
+      pieChart.options.drilldown.series = this.current.drillDown;
+      var ddCurrent = pieChart.series[0].userOptions.id;
+      var ddSeries = pieChart.options.drilldown.series;
 
-      for (var _i5 = column_chart.series.length - 1; _i5 >= 0; _i5--) {
-        column_chart.series[_i5].remove();
+      if (ddCurrent === undefined) {
+        pieChart.series[0].setData(pieChart.options.series[0].data);
+      } else {
+        for (var i = 0, ie = ddSeries.length; i < ie; ++i) {
+          if (ddSeries[i].id === ddCurrent) {
+            pieChart.series[0].setData(ddSeries[i].data);
+          }
+        }
+      }
+
+      pieChart.title.update({
+        text: this.current.title
+      }, false);
+      pieChart.redraw(false);
+
+      for (var _i11 = column_chart.series.length - 1; _i11 >= 0; _i11--) {
+        column_chart.series[_i11].remove();
       }
 
       for (var _y5 = this.Pharmacists.data.length - 1; _y5 >= 0; _y5--) {
@@ -2264,7 +2432,7 @@ var barchart, column_chart, mapChart;
     },
     ProcessMapChart: function ProcessMapChart(data) {
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        var array, country_code, _iterator, _step, index, temp, _iterator2, _step2, _step2$value, i, value;
+        var array, country_code, _iterator4, _step4, index, temp, _iterator5, _step5, _step5$value, i, value;
 
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
@@ -2272,31 +2440,35 @@ var barchart, column_chart, mapChart;
               case 0:
                 array = [];
                 country_code = ['bn', 'kh', 'id', 'la', 'my', 'mm', 'ph', 'sg', 'th', 'vn'];
-                _iterator = _createForOfIteratorHelper(data);
+                _iterator4 = _createForOfIteratorHelper(data);
 
                 try {
-                  for (_iterator.s(); !(_step = _iterator.n()).done;) {
-                    index = _step.value;
+                  for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+                    index = _step4.value;
                     temp = [];
-                    _iterator2 = _createForOfIteratorHelper(index.data.entries());
+                    _iterator5 = _createForOfIteratorHelper(index.data.entries());
 
                     try {
-                      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-                        _step2$value = _slicedToArray(_step2.value, 2), i = _step2$value[0], value = _step2$value[1];
-                        temp.push([country_code[i], value]);
+                      for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+                        _step5$value = _slicedToArray(_step5.value, 2), i = _step5$value[0], value = _step5$value[1];
+                        temp.push({
+                          'hc-key': country_code[i],
+                          value: value,
+                          borderColor: i === 5 ? '#c9ff00' : undefined
+                        });
                       }
                     } catch (err) {
-                      _iterator2.e(err);
+                      _iterator5.e(err);
                     } finally {
-                      _iterator2.f();
+                      _iterator5.f();
                     }
 
                     array[index.name] = temp;
                   }
                 } catch (err) {
-                  _iterator.e(err);
+                  _iterator4.e(err);
                 } finally {
-                  _iterator.f();
+                  _iterator4.f();
                 }
 
                 return _context.abrupt("return", array);
@@ -2331,20 +2503,21 @@ var barchart, column_chart, mapChart;
                             _this.CrudeRate.title = res.data.title;
                             _this.CrudeRate.categories = res.data.categories;
                             _this.CrudeRate.years = res.data.years;
-                            _context2.next = 7;
+                            _this.CrudeRate.genderData = res.data.gender_data;
+                            _context2.next = 8;
                             return _this.ProcessMapChart(_this.CrudeRate.data);
 
-                          case 7:
+                          case 8:
                             _this.CrudeRate.mapData = _context2.sent;
                             _this.currentPeriod = _this.CrudeRate.years;
-                            _context2.next = 11;
+                            _context2.next = 12;
                             return _this.currentPeriod[0];
 
-                          case 11:
+                          case 12:
                             _this.currentYear = _context2.sent;
                             return _context2.abrupt("return", 'finish');
 
-                          case 13:
+                          case 14:
                           case "end":
                             return _context2.stop();
                         }
@@ -2382,15 +2555,16 @@ var barchart, column_chart, mapChart;
                   _this2.ExpectBirth.data = res.data.data;
                   _this2.ExpectBirth.title = res.data.title;
                   _this2.ExpectBirth.categories = res.data.categories;
-                  _this2.ExpectBirth.years = res.data.years;
-                  _context4.next = 7;
+                  _this2.ExpectBirth.genderData = res.data.gender_data;
+                  _this2.ExpectBirth.years = res.data.years.reverse();
+                  _context4.next = 8;
                   return _this2.ProcessMapChart(_this2.ExpectBirth.data);
 
-                case 7:
+                case 8:
                   _this2.ExpectBirth.mapData = _context4.sent;
                   return _context4.abrupt("return", 'finish');
 
-                case 9:
+                case 10:
                 case "end":
                   return _context4.stop();
               }
@@ -2406,64 +2580,87 @@ var barchart, column_chart, mapChart;
     ProcessDoctor: function ProcessDoctor() {
       var _this3 = this;
 
-      axios.post('/doctors').then( /*#__PURE__*/function () {
-        var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(res) {
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
-            while (1) {
-              switch (_context5.prev = _context5.next) {
-                case 0:
-                  _this3.Doctor.name = res.data.name;
-                  _this3.Doctor.data = res.data.data;
-                  _this3.Doctor.title = res.data.title;
-                  _this3.Doctor.categories = res.data.categories;
-                  _this3.Doctor.years = res.data.years;
-                  _context5.next = 7;
-                  return _this3.ProcessMapChart(_this3.Doctor.data);
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6() {
+        var data;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                _context6.next = 2;
+                return axios.post('/doctors').then( /*#__PURE__*/function () {
+                  var _ref3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee5(res) {
+                    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee5$(_context5) {
+                      while (1) {
+                        switch (_context5.prev = _context5.next) {
+                          case 0:
+                            _this3.Doctor.name = res.data.name;
+                            _this3.Doctor.data = res.data.data;
+                            _this3.Doctor.title = res.data.title;
+                            _this3.Doctor.pieData = res.data.pie_name;
+                            _this3.Doctor.drillDown = res.data.pie_series;
+                            _this3.Doctor.categories = res.data.categories;
+                            _this3.Doctor.years = res.data.years.reverse();
+                            _context5.next = 9;
+                            return _this3.ProcessMapChart(_this3.Doctor.data);
 
-                case 7:
-                  _this3.Doctor.mapData = _context5.sent;
-                  return _context5.abrupt("return", 'finish');
+                          case 9:
+                            _this3.Doctor.mapData = _context5.sent;
+                            return _context5.abrupt("return", 'finish');
 
-                case 9:
-                case "end":
-                  return _context5.stop();
-              }
+                          case 11:
+                          case "end":
+                            return _context5.stop();
+                        }
+                      }
+                    }, _callee5);
+                  }));
+
+                  return function (_x3) {
+                    return _ref3.apply(this, arguments);
+                  };
+                }());
+
+              case 2:
+                data = _context6.sent;
+                return _context6.abrupt("return", data);
+
+              case 4:
+              case "end":
+                return _context6.stop();
             }
-          }, _callee5);
-        }));
-
-        return function (_x3) {
-          return _ref3.apply(this, arguments);
-        };
-      }());
+          }
+        }, _callee6);
+      }))();
     },
     ProcessNurse: function ProcessNurse() {
       var _this4 = this;
 
       axios.post('nurses').then( /*#__PURE__*/function () {
-        var _ref4 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee6(res) {
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee6$(_context6) {
+        var _ref4 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7(res) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee7$(_context7) {
             while (1) {
-              switch (_context6.prev = _context6.next) {
+              switch (_context7.prev = _context7.next) {
                 case 0:
                   _this4.Nurse.name = res.data.name;
                   _this4.Nurse.data = res.data.data;
                   _this4.Nurse.title = res.data.title;
+                  _this4.Nurse.pieData = res.data.pie_name;
+                  _this4.Nurse.drillDown = res.data.pie_series;
                   _this4.Nurse.categories = res.data.categories;
-                  _this4.Nurse.years = res.data.years;
-                  _context6.next = 7;
+                  _this4.Nurse.years = res.data.years.reverse();
+                  _context7.next = 9;
                   return _this4.ProcessMapChart(_this4.Nurse.data);
 
-                case 7:
-                  _this4.Nurse.mapData = _context6.sent;
-                  return _context6.abrupt("return", 'finish');
-
                 case 9:
+                  _this4.Nurse.mapData = _context7.sent;
+                  return _context7.abrupt("return", 'finish');
+
+                case 11:
                 case "end":
-                  return _context6.stop();
+                  return _context7.stop();
               }
             }
-          }, _callee6);
+          }, _callee7);
         }));
 
         return function (_x4) {
@@ -2475,29 +2672,31 @@ var barchart, column_chart, mapChart;
       var _this5 = this;
 
       axios.post('pharmacists').then( /*#__PURE__*/function () {
-        var _ref5 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee7(res) {
-          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee7$(_context7) {
+        var _ref5 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee8(res) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee8$(_context8) {
             while (1) {
-              switch (_context7.prev = _context7.next) {
+              switch (_context8.prev = _context8.next) {
                 case 0:
                   _this5.Pharmacists.name = res.data.name;
                   _this5.Pharmacists.data = res.data.data;
                   _this5.Pharmacists.title = res.data.title;
+                  _this5.Pharmacists.pieData = res.data.pie_name;
+                  _this5.Pharmacists.drillDown = res.data.pie_series;
                   _this5.Pharmacists.categories = res.data.categories;
-                  _this5.Pharmacists.years = res.data.years;
-                  _context7.next = 7;
+                  _this5.Pharmacists.years = res.data.years.reverse();
+                  _context8.next = 9;
                   return _this5.ProcessMapChart(_this5.Pharmacists.data);
 
-                case 7:
-                  _this5.Pharmacists.mapData = _context7.sent;
-                  return _context7.abrupt("return", 'finish');
-
                 case 9:
+                  _this5.Pharmacists.mapData = _context8.sent;
+                  return _context8.abrupt("return", 'finish');
+
+                case 11:
                 case "end":
-                  return _context7.stop();
+                  return _context8.stop();
               }
             }
-          }, _callee7);
+          }, _callee8);
         }));
 
         return function (_x5) {
@@ -2508,23 +2707,23 @@ var barchart, column_chart, mapChart;
     MakeHighChart: function MakeHighChart() {
       var _this6 = this;
 
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee8() {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee9() {
         var result;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee8$(_context8) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee9$(_context9) {
           while (1) {
-            switch (_context8.prev = _context8.next) {
+            switch (_context9.prev = _context9.next) {
               case 0:
-                _context8.next = 2;
+                _context9.next = 2;
                 return _this6.ProcessCrudeRate();
 
               case 2:
-                result = _context8.sent;
-                _context8.next = 5;
+                result = _context9.sent;
+                _context9.next = 5;
                 return result;
 
               case 5:
-                if (!_context8.sent) {
-                  _context8.next = 11;
+                if (!_context9.sent) {
+                  _context9.next = 11;
                   break;
                 }
 
@@ -2537,10 +2736,11 @@ var barchart, column_chart, mapChart;
                     backgroundColor: _this6.checkbox ? '#383C40' : '#ffffff'
                   },
                   title: {
-                    text: _this6.current.title
+                    text: _this6.current.title + "(".concat(_this6.currentYear, ")")
                   },
                   xAxis: {
-                    categories: _this6.current.categories
+                    categories: _this6.current.categories,
+                    crossHair: true
                   },
                   yAxis: {
                     min: 0,
@@ -2549,20 +2749,28 @@ var barchart, column_chart, mapChart;
                     }
                   },
                   tooltip: {
-                    headerFormat: '<b>{point.x}</b><br/>',
-                    pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+                    headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                    pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' + '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                    footerFormat: '</table>',
+                    shared: true,
+                    useHTML: true
                   },
                   plotOptions: {
                     column: {
-                      stacking: 'normal'
+                      pointPadding: 0.2,
+                      borderWidth: 0
+                    },
+                    series: {
+                      showCheckbox: true
                     }
                   },
-                  series: _this6.current.data
+                  series: _this6.current.genderData[_this6.currentYear]
                 });
                 column_chart = Highcharts.chart('container-1', {
                   chart: {
                     type: 'column',
-                    backgroundColor: _this6.checkbox ? '#383C40' : '#ffffff'
+                    backgroundColor: _this6.checkbox ? '#383C40' : '#ffffff',
+                    zoomType: 'Xy'
                   },
                   title: {
                     text: _this6.current.title
@@ -2588,6 +2796,9 @@ var barchart, column_chart, mapChart;
                     column: {
                       pointPadding: 0.2,
                       borderWidth: 0
+                    },
+                    series: {
+                      showCheckbox: true
                     }
                   },
                   series: _this6.current.data
@@ -2595,36 +2806,36 @@ var barchart, column_chart, mapChart;
 
               case 11:
               case "end":
-                return _context8.stop();
+                return _context9.stop();
             }
           }
-        }, _callee8);
+        }, _callee9);
       }))();
     },
     MapChart: function MapChart() {
       var _this7 = this;
 
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee10() {
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee11() {
         var data1, data;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee10$(_context10) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee11$(_context11) {
           while (1) {
-            switch (_context10.prev = _context10.next) {
+            switch (_context11.prev = _context11.next) {
               case 0:
-                _context10.next = 2;
+                _context11.next = 2;
                 return axios.post('asia').then( /*#__PURE__*/function () {
-                  var _ref6 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee9(res) {
-                    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee9$(_context9) {
+                  var _ref6 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee10(res) {
+                    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee10$(_context10) {
                       while (1) {
-                        switch (_context9.prev = _context9.next) {
+                        switch (_context10.prev = _context10.next) {
                           case 0:
-                            return _context9.abrupt("return", res.data);
+                            return _context10.abrupt("return", res.data);
 
                           case 1:
                           case "end":
-                            return _context9.stop();
+                            return _context10.stop();
                         }
                       }
-                    }, _callee9);
+                    }, _callee10);
                   }));
 
                   return function (_x6) {
@@ -2633,7 +2844,7 @@ var barchart, column_chart, mapChart;
                 }());
 
               case 2:
-                data1 = _context10.sent;
+                data1 = _context11.sent;
                 data = [['ph', 1], //Philippines - ph
                 ['th', 5], // Thailand -th
                 ['mm', 13], //myanmar - mm
@@ -2646,21 +2857,23 @@ var barchart, column_chart, mapChart;
                 ['bn', 43] //Brunei - bn
                 ]; // Create the chart
 
-                _context10.next = 6;
+                _context11.next = 6;
                 return data1;
 
               case 6:
-                if (!_context10.sent) {
-                  _context10.next = 9;
+                if (!_context11.sent) {
+                  _context11.next = 17;
                   break;
                 }
 
                 _this7.waitMapChart = false;
-                mapChart = HighMaps.mapChart('map-container', {
+                _context11.next = 10;
+                return HighMaps.mapChart('map-container', {
                   chart: {
                     map: asia_map,
                     //asia_map
-                    backgroundColor: _this7.checkbox ? '#383C40' : '#ffffff'
+                    backgroundColor: _this7.checkbox ? '#383C40' : '#ffffff',
+                    events: {}
                   },
                   title: {
                     text: _this7.current.title
@@ -2679,53 +2892,166 @@ var barchart, column_chart, mapChart;
                     name: _this7.currentPeriod[0],
                     states: {
                       hover: {
-                        color: '#BADA55'
+                        color: '#BADA55',
+                        borderWidth: 4
                       }
                     }
                   }]
                 });
 
-              case 9:
-              case "end":
-                return _context10.stop();
-            }
-          }
-        }, _callee10);
-      }))();
-    },
-    Render: function Render() {
-      var _this8 = this;
-
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee11() {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee11$(_context11) {
-          while (1) {
-            switch (_context11.prev = _context11.next) {
-              case 0:
-                _context11.next = 2;
-                return _this8.ProcessExpectBirth();
-
-              case 2:
-                _context11.next = 4;
-                return _this8.ProcessDoctor();
-
-              case 4:
-                _context11.next = 6;
-                return _this8.ProcessNurse();
-
-              case 6:
-                _context11.next = 8;
-                return _this8.ProcessPharmacists();
-
-              case 8:
-                _context11.next = 10;
-                return _this8.MapChart();
-
               case 10:
+                mapChart = _context11.sent;
+
+                // [lg:-450,1366] , [<sm : -250,411] ,[ md: -400 , 1285 ]
+                if (between(window.innerWidth, 1280, 1536) || window.innerWidth > 1536) {
+                  mapChart.mapZoom(0.35, 0, 0, -(window.innerWidth / 2.6), 30);
+                }
+
+                if (between(window.innerWidth, 1024, 1280)) {
+                  mapChart.mapZoom(0.34, 0, 0, -(window.innerWidth / 2.6), 30);
+                }
+
+                if (between(window.innerWidth, 768, 1024)) {
+                  mapChart.mapZoom(0.338, 0, 0, -(window.innerWidth / 2.7), 30);
+                }
+
+                if (between(window.innerWidth, 640, 768)) {
+                  mapChart.mapZoom(0.338, 0, 0, -(window.innerWidth / 3), 30);
+                }
+
+                if (window.innerWidth < 640) {
+                  mapChart.mapZoom(0.33, 0, 0, -(window.innerWidth / 1.65), 30);
+                } //  mapChart.mapZoom(0.33,0,0,-(window.innerWidth/2.82),30);
+
+
+                mapChart.series[0].data[5].graphic.attr({
+                  'stroke-width': 2
+                });
+
+              case 17:
               case "end":
                 return _context11.stop();
             }
           }
         }, _callee11);
+      }))();
+    },
+    PieChart: function PieChart() {
+      var _this8 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee12() {
+        var el;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee12$(_context12) {
+          while (1) {
+            switch (_context12.prev = _context12.next) {
+              case 0:
+                el = _this8;
+                _context12.next = 3;
+                return _this8.ProcessDoctor();
+
+              case 3:
+                if (!_context12.sent) {
+                  _context12.next = 7;
+                  break;
+                }
+
+                _context12.next = 6;
+                return Highcharts.chart('pie-container', {
+                  chart: {
+                    type: 'pie',
+                    events: {
+                      drillup: function drillup(e) {
+                        this.title.update({
+                          text: el.current.title
+                        }, false);
+                        this.redraw(false);
+                      },
+                      drilldown: function drilldown(e) {
+                        this.title.update({
+                          text: el.current.title + "(".concat(el.currentYear, ")")
+                        }, false);
+                        this.redraw(false);
+                      }
+                    },
+                    width: document.querySelector('#container').getBoundingClientRect().width
+                  },
+                  title: {
+                    text: _this8.current.title
+                  },
+                  accessibility: {
+                    announceNewData: {
+                      enabled: true
+                    },
+                    point: {
+                      valueSuffix: '%'
+                    }
+                  },
+                  plotOptions: {
+                    series: {
+                      dataLabels: {
+                        enabled: true,
+                        format: '{point.name}: {point.y:.1f}%'
+                      }
+                    }
+                  },
+                  tooltip: {
+                    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                    pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+                  },
+                  series: [{
+                    name: "Years",
+                    colorByPoint: true,
+                    data: _this8.Doctor.pieData
+                  }],
+                  drilldown: {
+                    series: _this8.Doctor.drillDown
+                  }
+                });
+
+              case 6:
+                return _context12.abrupt("return", pieChart = _context12.sent);
+
+              case 7:
+              case "end":
+                return _context12.stop();
+            }
+          }
+        }, _callee12);
+      }))();
+    },
+    Render: function Render() {
+      var _this9 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee13() {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee13$(_context13) {
+          while (1) {
+            switch (_context13.prev = _context13.next) {
+              case 0:
+                _context13.next = 2;
+                return _this9.ProcessExpectBirth();
+
+              case 2:
+                _context13.next = 4;
+                return _this9.PieChart();
+
+              case 4:
+                _context13.next = 6;
+                return _this9.ProcessNurse();
+
+              case 6:
+                _context13.next = 8;
+                return _this9.ProcessPharmacists();
+
+              case 8:
+                _context13.next = 10;
+                return _this9.MapChart();
+
+              case 10:
+              case "end":
+                return _context13.stop();
+            }
+          }
+        }, _callee13);
       }))();
     }
   },
@@ -2895,8 +3221,12 @@ var barchart, column_chart, mapChart;
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
   \*****************************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var highcharts_modules_drilldown__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! highcharts/modules/drilldown */ "./node_modules/highcharts/modules/drilldown.js");
+/* harmony import */ var highcharts_modules_drilldown__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(highcharts_modules_drilldown__WEBPACK_IMPORTED_MODULE_0__);
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -2912,6 +3242,8 @@ Highcharts.setOptions({
     }
   }
 });
+
+highcharts_modules_drilldown__WEBPACK_IMPORTED_MODULE_0___default()(Highcharts);
 window.HighMaps = __webpack_require__(/*! highcharts/highmaps.js */ "./node_modules/highcharts/highmaps.js");
 HighMaps.setOptions({
   chart: {
@@ -3005,7 +3337,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n[data-v-f2b6376c] input[type=\"checkbox\"]{\n    -webkit-appearance: none;\n    display: none;\n    visibility: hidden;\n}\n.check[data-v-f2b6376c]{\n position: relative;\n    display: block;\n    width:40px;\n    height:20px;\n    background: #092c3e;\n    cursor: pointer;\n    border-radius: 20px;\n    overflow:hidden;\n    transition:ease-in 0.3s;\n}\ninput[type='checkbox']:checked ~ .check[data-v-f2b6376c]{\n    background:#F3F3F3;\n}\n.check[data-v-f2b6376c]:before{\n    content:'';\n    position:absolute;\n    top:2px;\n    left:2px;\n    background:#fff;\n    width:16px;\n    height:16px;\n    border-radius: 50%;\n    transition:0.5s;\n}\ninput[type='checkbox']:checked ~ .check[data-v-f2b6376c]:before{\n    transform: translateX(20px);\n    right:2px;\n    background:#092c3e;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n[data-v-f2b6376c] input[type=\"checkbox\"]{\n    -webkit-appearance: none;\n    display: none;\n    visibility: hidden;\n}\n.check[data-v-f2b6376c]{\n position: relative;\n    display: block;\n    width:40px;\n    height:20px;\n    background: #092c3e;\n    cursor: pointer;\n    border-radius: 20px;\n    overflow:hidden;\n    transition:ease-in 0.3s;\n}\ninput[type='checkbox']:checked ~ .check[data-v-f2b6376c]{\n    background:#F3F3F3;\n}\n.check[data-v-f2b6376c]:before{\n    content:'';\n    position:absolute;\n    top:2px;\n    left:2px;\n    background:#fff;\n    width:16px;\n    height:16px;\n    border-radius: 50%;\n    transition:0.5s;\n}\ninput[type='checkbox']:checked ~ .check[data-v-f2b6376c]:before{\n    transform: translateX(20px);\n    right:2px;\n    background:#092c3e;\n}\n@media screen and (max-width: 640px){\n.holder[data-v-f2b6376c]{\n        height: 500px !important;\n}\n}\n@media screen and (min-width: 640px){\n.holder[data-v-f2b6376c]{\n        height: 100% !important;\n}\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -4293,6 +4625,48 @@ m["default"])};h.geojson=function(h,m,g){var n=[],q=[],r=function(g){g.forEach(f
 q.length&&(k={path:q})):"mappoint"===m&&"Point"===p&&(k={x:h[0],y:-h[1]});k&&n.push(L(k,{name:g.name||g.NAME,properties:g}))});g&&h.copyrightShort&&(g.chart.mapCredits=G(g.chart.options.credits.mapText,{geojson:h}),g.chart.mapCreditsFull=G(g.chart.options.credits.mapTextFull,{geojson:h}));return n};q(n.prototype,"addCredits",function(h,m){m=B(!0,this.options.credits,m);this.mapCredits&&(m.href=null);h.call(this,m);this.credits&&this.mapCreditsFull&&this.credits.attr({title:this.mapCreditsFull})})});
 O(q,"masters/modules/map.src.js",[],function(){});O(q,"masters/highmaps.src.js",[q["masters/highcharts.src.js"]],function(n){n.product="Highmaps";return n});q["masters/highmaps.src.js"]._modules=q;return q["masters/highmaps.src.js"]});
 //# sourceMappingURL=highmaps.js.map
+
+/***/ }),
+
+/***/ "./node_modules/highcharts/modules/drilldown.js":
+/*!******************************************************!*\
+  !*** ./node_modules/highcharts/modules/drilldown.js ***!
+  \******************************************************/
+/***/ ((module, exports, __webpack_require__) => {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
+ Highcharts JS v8.2.2 (2020-10-22)
+
+ Highcharts Drilldown module
+
+ Author: Torstein Honsi
+ License: www.highcharts.com/license
+
+*/
+(function(c){ true&&module.exports?(c["default"]=c,module.exports=c): true?!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(/*! highcharts */ "./node_modules/highcharts/highcharts.js")], __WEBPACK_AMD_DEFINE_RESULT__ = (function(m){c(m);c.Highcharts=m;return c}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+		__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)):0})(function(c){function m(c,m,n,y){c.hasOwnProperty(m)||(c[m]=y.apply(null,n))}c=c?c._modules:{};m(c,"Extensions/Drilldown.js",[c["Core/Animation/AnimationUtilities.js"],c["Core/Axis/Axis.js"],c["Core/Chart/Chart.js"],c["Core/Color/Color.js"],
+c["Core/Globals.js"],c["Core/Options.js"],c["Core/Series/Point.js"],c["Core/Renderer/SVG/SVGRenderer.js"],c["Core/Axis/Tick.js"],c["Core/Utilities.js"]],function(c,m,n,y,w,p,z,E,B,k){var C=c.animObject,F=w.noop;c=p.defaultOptions;var q=k.addEvent,G=k.removeEvent,t=k.extend,x=k.fireEvent,H=k.format,u=k.merge,I=k.objectEach,v=k.pick,J=k.syncTimeout;p=w.seriesTypes;k=p.pie;p=p.column;var D=1;t(c.lang,{drillUpText:"\u25c1 Back to {series.name}"});c.drilldown={activeAxisLabelStyle:{cursor:"pointer",color:"#003399",
+fontWeight:"bold",textDecoration:"underline"},activeDataLabelStyle:{cursor:"pointer",color:"#003399",fontWeight:"bold",textDecoration:"underline"},animation:{duration:500},drillUpButton:{position:{align:"right",x:-10,y:10}}};E.prototype.Element.prototype.fadeIn=function(a){this.attr({opacity:.1,visibility:"inherit"}).animate({opacity:v(this.newOpacity,1)},a||{duration:250})};n.prototype.addSeriesAsDrilldown=function(a,b){this.addSingleSeriesAsDrilldown(a,b);this.applyDrilldown()};n.prototype.addSingleSeriesAsDrilldown=
+function(a,b){var d=a.series,e=d.xAxis,f=d.yAxis,g=[],r=[],h;var l=this.styledMode?{colorIndex:v(a.colorIndex,d.colorIndex)}:{color:a.color||d.color};this.drilldownLevels||(this.drilldownLevels=[]);var c=d.options._levelNumber||0;(h=this.drilldownLevels[this.drilldownLevels.length-1])&&h.levelNumber!==c&&(h=void 0);b=t(t({_ddSeriesId:D++},l),b);var k=d.points.indexOf(a);d.chart.series.forEach(function(a){a.xAxis!==e||a.isDrilling||(a.options._ddSeriesId=a.options._ddSeriesId||D++,a.options._colorIndex=
+a.userOptions._colorIndex,a.options._levelNumber=a.options._levelNumber||c,h?(g=h.levelSeries,r=h.levelSeriesOptions):(g.push(a),a.purgedOptions=u({_ddSeriesId:a.options._ddSeriesId,_levelNumber:a.options._levelNumber,selected:a.options.selected},a.userOptions),r.push(a.purgedOptions)))});a=t({levelNumber:c,seriesOptions:d.options,seriesPurgedOptions:d.purgedOptions,levelSeriesOptions:r,levelSeries:g,shapeArgs:a.shapeArgs,bBox:a.graphic?a.graphic.getBBox():{},color:a.isNull?(new y(l.color)).setOpacity(0).get():
+l.color,lowerSeriesOptions:b,pointOptions:d.options.data[k],pointIndex:k,oldExtremes:{xMin:e&&e.userMin,xMax:e&&e.userMax,yMin:f&&f.userMin,yMax:f&&f.userMax},resetZoomButton:this.resetZoomButton},l);this.drilldownLevels.push(a);e&&e.names&&(e.names.length=0);b=a.lowerSeries=this.addSeries(b,!1);b.options._levelNumber=c+1;e&&(e.oldPos=e.pos,e.userMin=e.userMax=null,f.userMin=f.userMax=null);d.type===b.type&&(b.animate=b.animateDrilldown||F,b.options.animation=!0)};n.prototype.applyDrilldown=function(){var a=
+this.drilldownLevels;if(a&&0<a.length){var b=a[a.length-1].levelNumber;this.drilldownLevels.forEach(function(a){a.levelNumber===b&&a.levelSeries.forEach(function(a){a.options&&a.options._levelNumber===b&&a.remove(!1)})})}this.resetZoomButton&&(this.resetZoomButton.hide(),delete this.resetZoomButton);this.pointer.reset();this.redraw();this.showDrillUpButton();x(this,"afterDrilldown")};n.prototype.getDrilldownBackText=function(){var a=this.drilldownLevels;if(a&&0<a.length)return a=a[a.length-1],a.series=
+a.seriesOptions,H(this.options.lang.drillUpText,a)};n.prototype.showDrillUpButton=function(){var a=this,b=this.getDrilldownBackText(),d=a.options.drilldown.drillUpButton,e;if(this.drillUpButton)this.drillUpButton.attr({text:b}).align();else{var f=(e=d.theme)&&e.states;this.drillUpButton=this.renderer.button(b,null,null,function(){a.drillUp()},e,f&&f.hover,f&&f.select).addClass("highcharts-drillup-button").attr({align:d.position.align,zIndex:7}).add().align(d.position,!1,d.relativeTo||"plotBox")}};
+n.prototype.drillUp=function(){if(this.drilldownLevels&&0!==this.drilldownLevels.length){for(var a=this,b=a.drilldownLevels,d=b[b.length-1].levelNumber,e=b.length,f=a.series,g,c,h,l,k=function(b){f.forEach(function(a){a.options._ddSeriesId===b._ddSeriesId&&(d=a)});var d=d||a.addSeries(b,!1);d.type===h.type&&d.animateDrillupTo&&(d.animate=d.animateDrillupTo);b===c.seriesPurgedOptions&&(l=d)};e--;)if(c=b[e],c.levelNumber===d){b.pop();h=c.lowerSeries;if(!h.chart)for(g=f.length;g--;)if(f[g].options.id===
+c.lowerSeriesOptions.id&&f[g].options._levelNumber===d+1){h=f[g];break}h.xData=[];c.levelSeriesOptions.forEach(k);x(a,"drillup",{seriesOptions:c.seriesPurgedOptions||c.seriesOptions});l.type===h.type&&(l.drilldownLevel=c,l.options.animation=a.options.drilldown.animation,h.animateDrillupFrom&&h.chart&&h.animateDrillupFrom(c));l.options._levelNumber=d;h.remove(!1);l.xAxis&&(g=c.oldExtremes,l.xAxis.setExtremes(g.xMin,g.xMax,!1),l.yAxis.setExtremes(g.yMin,g.yMax,!1));c.resetZoomButton&&(a.resetZoomButton=
+c.resetZoomButton,a.resetZoomButton.show())}this.redraw();0===this.drilldownLevels.length?this.drillUpButton=this.drillUpButton.destroy():this.drillUpButton.attr({text:this.getDrilldownBackText()}).align();this.ddDupes.length=[];x(a,"drillupall")}};q(n,"afterInit",function(){var a=this;a.drilldown={update:function(b,d){u(!0,a.options.drilldown,b);v(d,!0)&&a.redraw()}}});q(n,"beforeShowResetZoom",function(){if(this.drillUpButton)return!1});q(n,"render",function(){(this.xAxis||[]).forEach(function(a){a.ddPoints=
+{};a.series.forEach(function(b){var d,e=b.xData||[],f=b.points;for(d=0;d<e.length;d++){var c=b.options.data[d];"number"!==typeof c&&(c=b.pointClass.prototype.optionsToObject.call({series:b},c),c.drilldown&&(a.ddPoints[e[d]]||(a.ddPoints[e[d]]=[]),a.ddPoints[e[d]].push(f?f[d]:!0)))}});I(a.ticks,B.prototype.drillable)})});p.prototype.animateDrillupTo=function(a){if(!a){var b=this,d=b.drilldownLevel;this.points.forEach(function(a){var b=a.dataLabel;a.graphic&&a.graphic.hide();b&&(b.hidden="hidden"===
+b.attr("visibility"),b.hidden||(b.hide(),a.connector&&a.connector.hide()))});J(function(){if(b.points){var a=[];b.data.forEach(function(b){a.push(b)});b.nodes&&(a=a.concat(b.nodes));a.forEach(function(a,b){b=b===(d&&d.pointIndex)?"show":"fadeIn";var c="show"===b?!0:void 0,e=a.dataLabel;if(a.graphic)a.graphic[b](c);e&&!e.hidden&&(e.fadeIn(),a.connector&&a.connector.fadeIn())})}},Math.max(this.chart.options.drilldown.animation.duration-50,0));delete this.animate}};p.prototype.animateDrilldown=function(a){var b=
+this,d=this.chart,e=d.drilldownLevels,c,g=C(d.options.drilldown.animation),r=this.xAxis,h=d.styledMode;a||(e.forEach(function(a){b.options._ddSeriesId===a.lowerSeriesOptions._ddSeriesId&&(c=a.shapeArgs,h||(c.fill=a.color))}),c.x+=v(r.oldPos,r.pos)-r.pos,this.points.forEach(function(a){var d=a.shapeArgs;h||(d.fill=a.color);a.graphic&&a.graphic.attr(c).animate(t(a.shapeArgs,{fill:a.color||b.color}),g);a.dataLabel&&a.dataLabel.fadeIn(g)}),delete this.animate)};p.prototype.animateDrillupFrom=function(a){var b=
+C(this.chart.options.drilldown.animation),d=this.group,c=d!==this.chart.columnGroup,f=this;f.trackerGroups.forEach(function(a){if(f[a])f[a].on("mouseover")});c&&delete this.group;this.points.forEach(function(e){var g=e.graphic,h=a.shapeArgs,l=function(){g.destroy();d&&c&&(d=d.destroy())};g&&h&&(delete e.graphic,f.chart.styledMode||(h.fill=a.color),b.duration?g.animate(h,u(b,{complete:l})):(g.attr(h),l()))})};k&&t(k.prototype,{animateDrillupTo:p.prototype.animateDrillupTo,animateDrillupFrom:p.prototype.animateDrillupFrom,
+animateDrilldown:function(a){var b=this.chart.drilldownLevels[this.chart.drilldownLevels.length-1],d=this.chart.options.drilldown.animation;this.is("item")&&(d.duration=0);if(this.center){var c=b.shapeArgs,f=c.start,g=(c.end-f)/this.points.length,k=this.chart.styledMode;a||(this.points.forEach(function(a,e){var h=a.shapeArgs;k||(c.fill=b.color,h.fill=a.color);if(a.graphic)a.graphic.attr(u(c,{start:f+e*g,end:f+(e+1)*g}))[d?"animate":"attr"](h,d)}),delete this.animate)}}});z.prototype.doDrilldown=function(a,
+b,d){var c=this.series.chart,f=c.options.drilldown,g=(f.series||[]).length;c.ddDupes||(c.ddDupes=[]);for(;g--&&!k;)if(f.series[g].id===this.drilldown&&-1===c.ddDupes.indexOf(this.drilldown)){var k=f.series[g];c.ddDupes.push(this.drilldown)}x(c,"drilldown",{point:this,seriesOptions:k,category:b,originalEvent:d,points:"undefined"!==typeof b&&this.series.xAxis.getDDPoints(b).slice(0)},function(b){var d=b.point.series&&b.point.series.chart,c=b.seriesOptions;d&&c&&(a?d.addSingleSeriesAsDrilldown(b.point,
+c):d.addSeriesAsDrilldown(b.point,c))})};m.prototype.drilldownCategory=function(a,b){this.getDDPoints(a).forEach(function(d){d&&d.series&&d.series.visible&&d.doDrilldown&&d.doDrilldown(!0,a,b)});this.chart.applyDrilldown()};m.prototype.getDDPoints=function(a){return this.ddPoints&&this.ddPoints[a]||[]};B.prototype.drillable=function(){var a=this.pos,b=this.label,d=this.axis,c="xAxis"===d.coll&&d.getDDPoints,f=c&&d.getDDPoints(a),g=d.chart.styledMode;c&&(b&&f&&f.length?(b.drillable=!0,b.basicStyles||
+g||(b.basicStyles=u(b.styles)),b.addClass("highcharts-drilldown-axis-label"),b.removeOnDrillableClick&&G(b.element,"click"),b.removeOnDrillableClick=q(b.element,"click",function(b){b.preventDefault();d.drilldownCategory(a,b)}),g||b.css(d.chart.options.drilldown.activeAxisLabelStyle)):b&&b.drillable&&b.removeOnDrillableClick&&(g||(b.styles={},b.css(b.basicStyles)),b.removeOnDrillableClick(),b.removeClass("highcharts-drilldown-axis-label")))};q(z,"afterInit",function(){var a=this,b=a.series;a.drilldown&&
+q(a,"click",function(c){b.xAxis&&!1===b.chart.options.drilldown.allowPointDrilldown?b.xAxis.drilldownCategory(a.x,c):a.doDrilldown(void 0,void 0,c)});return a});q(w.Series,"afterDrawDataLabels",function(){var a=this.chart.options.drilldown.activeDataLabelStyle,b=this.chart.renderer,c=this.chart.styledMode;this.points.forEach(function(d){var f=d.options.dataLabels,e=v(d.dlOptions,f&&f.style,{});d.drilldown&&d.dataLabel&&("contrast"!==a.color||c||(e.color=b.getContrast(d.color||this.color)),f&&f.color&&
+(e.color=f.color),d.dataLabel.addClass("highcharts-drilldown-data-label"),c||d.dataLabel.css(a).css(e))},this)});var A=function(a,b,c,e){a[c?"addClass":"removeClass"]("highcharts-drilldown-point");e||a.css({cursor:b})};q(w.Series,"afterDrawTracker",function(){var a=this.chart.styledMode;this.points.forEach(function(b){b.drilldown&&b.graphic&&A(b.graphic,"pointer",!0,a)})});q(z,"afterSetState",function(){var a=this.series.chart.styledMode;this.drilldown&&this.series.halo&&"hover"===this.state?A(this.series.halo,
+"pointer",!0,a):this.series.halo&&A(this.series.halo,"auto",!1,a)})});m(c,"masters/modules/drilldown.src.js",[],function(){})});
+//# sourceMappingURL=drilldown.js.map
 
 /***/ }),
 
@@ -36493,51 +36867,6 @@ var render = function() {
       _c(
         "div",
         {
-          directives: [
-            {
-              name: "show",
-              rawName: "v-show",
-              value: _vm.pageLoading,
-              expression: "pageLoading"
-            }
-          ],
-          staticClass:
-            "absolute z-20 top-0 left-0 w-full bg-primary h-full flex items-center justify-center"
-        },
-        [
-          _c(
-            "svg",
-            {
-              staticClass:
-                "w-10 h-10 animate-spin text-dark-primary fill-current",
-              attrs: {
-                xmlns: "http://www.w3.org/2000/svg",
-                "xmlns:xlink": "http://www.w3.org/1999/xlink",
-                version: "1.1",
-                id: "Layer_1",
-                x: "0px",
-                y: "0px",
-                width: "512px",
-                height: "512px",
-                viewBox: "0 0 512 512",
-                "xml:space": "preserve"
-              }
-            },
-            [
-              _c("path", {
-                attrs: {
-                  d:
-                    "M479.8 226.1c-1.4-8.7-3.1-17.3-5.3-25.8-2.8-10.8-6.4-21.5-10.8-31.8-8.9-21.2-21.1-41-35.9-58.6-16-18.9-35.3-35.2-56.7-47.7C350 49.8 327 41 303 36.1c-12.4-2.5-24.9-4-37.6-4.1-9.9-.1-19.8.3-29.6 1.2-25.5 2.5-50.7 9.6-73.9 20.5-19.9 9.4-38.4 21.6-54.8 36.2-16.4 14.6-30.7 31.6-42.2 50.3-12.7 20.8-22.2 43.5-27.4 67.3-4.2 19-6.2 38.6-5.2 58.1.9 18.9 3.8 37.8 9.5 55.9 3.6 11.5 7.9 22.7 13.3 33.6 5.3 10.7 11.5 21 18.4 30.7 13.8 19.3 30.6 36.4 49.8 50.5 19.6 14.5 41.7 25.7 64.9 33.1 24.2 7.7 49.9 11.3 75.3 10.4 24.8-.8 49.4-5.6 72.6-14.5 22.3-8.6 43.2-20.9 61.5-36.3 9.2-7.8 17.4-16.6 25.1-25.9 7.8-9.4 14.8-19.3 20.6-30 5-9.2 9.2-18.8 12.8-28.5 1.8-4.8 3.5-9.6 4.9-14.6 1.5-5.3 2.6-10.8 3.6-16.2 1.5-8.5 2.1-17.3 1.3-25.9-.7 3.8-1.3 7.5-2.2 11.2-1.1 4.3-2.5 8.5-4.1 12.6-3.2 8.7-7.2 17.1-11 25.5-4.9 10.7-10.6 20.9-16.8 30.8-3.2 5.1-6.5 10.1-10.1 14.9-3.6 4.8-7.7 9.4-11.8 13.9-8.2 9.1-17.1 17.2-27 24.4-10.1 7.4-20.8 13.9-32.1 19.3-22.6 11-47.3 17.6-72.3 19.8-25.6 2.2-51.7-.3-76.3-7.6-23.4-6.9-45.6-18.1-65.1-32.8-18.9-14.3-35.3-31.9-48.2-51.8C75.4 347.8 66.1 324.9 61 301c-1.3-6.2-2.3-12.6-3-18.9-.6-5.4-1.1-10.9-1.3-16.4-.3-11.3.4-23 2.1-34.2 3.7-24.6 11.7-48.3 24.1-69.9 11-19.3 25.3-36.7 42.1-51.4 16.8-14.8 36-26.7 56.8-35.1 12-4.9 24.6-8.5 37.4-10.9 6.5-1.2 13-2.2 19.5-2.7 3.2-.3 6.3-.3 9.5-.6 1.3 0 2.6.1 3.9.1 21.7-.4 43.5 2.4 64.2 8.9 22.3 7 43.3 18.3 61.5 33 19.1 15.4 35 34.4 47 55.8 10.2 18.2 17.5 37.8 21.9 58.2 1 4.7 1.8 9.4 2.6 14.1.7 4.3 3.1 8.3 6.8 10.7 7.8 5.2 18.7 1.7 22.5-6.7 1.3-2.9 1.7-6 1.2-8.9z"
-                }
-              })
-            ]
-          )
-        ]
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
           staticClass:
             "absolute top-0 border-b-2 border-gray-600 left-0 bg-white dark:bg-dark-secondary header w-full justify-between items-center flex sm:px-3 px-4 py-2 sm:py-4"
         },
@@ -36672,73 +37001,20 @@ var render = function() {
       _vm._v(" "),
       _c(
         "div",
-        { staticClass: "w-full sm:w-1/2 h-full flex flex-col justify-between" },
+        {
+          staticClass:
+            "w-full h-full sm:w-1/2 sm:h-full flex flex-col justify-between"
+        },
         [
           _c("div", { staticClass: "h-20 sm:h-16 w-full" }),
           _vm._v(" "),
           _c(
             "div",
-            { staticClass: "flex flex-col w-full h-full justify-around" },
+            {
+              staticClass:
+                "flex flex-col h-full w-full sm:h-full justify-around"
+            },
             [
-              _c(
-                "div",
-                {
-                  staticClass:
-                    "w-full h-full sm:h-1/2 flex px-4 py-2 items-center justify-center"
-                },
-                [
-                  _c(
-                    "svg",
-                    {
-                      directives: [
-                        {
-                          name: "show",
-                          rawName: "v-show",
-                          value: _vm.waitBarChart,
-                          expression: "waitBarChart"
-                        }
-                      ],
-                      staticClass:
-                        "w-10 h-10 animate-spin text-blue-400 fill-current",
-                      attrs: {
-                        xmlns: "http://www.w3.org/2000/svg",
-                        "xmlns:xlink": "http://www.w3.org/1999/xlink",
-                        version: "1.1",
-                        id: "Layer_1",
-                        x: "0px",
-                        y: "0px",
-                        width: "512px",
-                        height: "512px",
-                        viewBox: "0 0 512 512",
-                        "xml:space": "preserve"
-                      }
-                    },
-                    [
-                      _c("path", {
-                        attrs: {
-                          d:
-                            "M479.8 226.1c-1.4-8.7-3.1-17.3-5.3-25.8-2.8-10.8-6.4-21.5-10.8-31.8-8.9-21.2-21.1-41-35.9-58.6-16-18.9-35.3-35.2-56.7-47.7C350 49.8 327 41 303 36.1c-12.4-2.5-24.9-4-37.6-4.1-9.9-.1-19.8.3-29.6 1.2-25.5 2.5-50.7 9.6-73.9 20.5-19.9 9.4-38.4 21.6-54.8 36.2-16.4 14.6-30.7 31.6-42.2 50.3-12.7 20.8-22.2 43.5-27.4 67.3-4.2 19-6.2 38.6-5.2 58.1.9 18.9 3.8 37.8 9.5 55.9 3.6 11.5 7.9 22.7 13.3 33.6 5.3 10.7 11.5 21 18.4 30.7 13.8 19.3 30.6 36.4 49.8 50.5 19.6 14.5 41.7 25.7 64.9 33.1 24.2 7.7 49.9 11.3 75.3 10.4 24.8-.8 49.4-5.6 72.6-14.5 22.3-8.6 43.2-20.9 61.5-36.3 9.2-7.8 17.4-16.6 25.1-25.9 7.8-9.4 14.8-19.3 20.6-30 5-9.2 9.2-18.8 12.8-28.5 1.8-4.8 3.5-9.6 4.9-14.6 1.5-5.3 2.6-10.8 3.6-16.2 1.5-8.5 2.1-17.3 1.3-25.9-.7 3.8-1.3 7.5-2.2 11.2-1.1 4.3-2.5 8.5-4.1 12.6-3.2 8.7-7.2 17.1-11 25.5-4.9 10.7-10.6 20.9-16.8 30.8-3.2 5.1-6.5 10.1-10.1 14.9-3.6 4.8-7.7 9.4-11.8 13.9-8.2 9.1-17.1 17.2-27 24.4-10.1 7.4-20.8 13.9-32.1 19.3-22.6 11-47.3 17.6-72.3 19.8-25.6 2.2-51.7-.3-76.3-7.6-23.4-6.9-45.6-18.1-65.1-32.8-18.9-14.3-35.3-31.9-48.2-51.8C75.4 347.8 66.1 324.9 61 301c-1.3-6.2-2.3-12.6-3-18.9-.6-5.4-1.1-10.9-1.3-16.4-.3-11.3.4-23 2.1-34.2 3.7-24.6 11.7-48.3 24.1-69.9 11-19.3 25.3-36.7 42.1-51.4 16.8-14.8 36-26.7 56.8-35.1 12-4.9 24.6-8.5 37.4-10.9 6.5-1.2 13-2.2 19.5-2.7 3.2-.3 6.3-.3 9.5-.6 1.3 0 2.6.1 3.9.1 21.7-.4 43.5 2.4 64.2 8.9 22.3 7 43.3 18.3 61.5 33 19.1 15.4 35 34.4 47 55.8 10.2 18.2 17.5 37.8 21.9 58.2 1 4.7 1.8 9.4 2.6 14.1.7 4.3 3.1 8.3 6.8 10.7 7.8 5.2 18.7 1.7 22.5-6.7 1.3-2.9 1.7-6 1.2-8.9z"
-                        }
-                      })
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c("div", {
-                    directives: [
-                      {
-                        name: "show",
-                        rawName: "v-show",
-                        value: !_vm.waitBarChart,
-                        expression: "!waitBarChart"
-                      }
-                    ],
-                    staticClass:
-                      "w-full h-full border-2 border-gray-600 dark:border-gray-300  bg-white dark:bg-dark-secondary flex items-center justify-center",
-                    attrs: { id: "container" }
-                  })
-                ]
-              ),
-              _vm._v(" "),
               _c(
                 "div",
                 {
@@ -36796,6 +37072,93 @@ var render = function() {
                     attrs: { id: "container-1" }
                   })
                 ]
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "w-full h-full items-center justify-center sm:h-1/2"
+                },
+                [
+                  _c("div", { staticClass: "w-full h-full relative holder" }, [
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "absolute w-full h-full top-0 left-0 flex items-center px-4 py-2 justify-center",
+                        class: _vm.showPie ? "z-0 opacity-0" : "z-10"
+                      },
+                      [
+                        _c(
+                          "svg",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value: _vm.waitBarChart,
+                                expression: "waitBarChart"
+                              }
+                            ],
+                            staticClass:
+                              "w-10 h-10 animate-spin text-blue-400 fill-current",
+                            attrs: {
+                              xmlns: "http://www.w3.org/2000/svg",
+                              "xmlns:xlink": "http://www.w3.org/1999/xlink",
+                              version: "1.1",
+                              id: "Layer_1",
+                              x: "0px",
+                              y: "0px",
+                              width: "512px",
+                              height: "512px",
+                              viewBox: "0 0 512 512",
+                              "xml:space": "preserve"
+                            }
+                          },
+                          [
+                            _c("path", {
+                              attrs: {
+                                d:
+                                  "M479.8 226.1c-1.4-8.7-3.1-17.3-5.3-25.8-2.8-10.8-6.4-21.5-10.8-31.8-8.9-21.2-21.1-41-35.9-58.6-16-18.9-35.3-35.2-56.7-47.7C350 49.8 327 41 303 36.1c-12.4-2.5-24.9-4-37.6-4.1-9.9-.1-19.8.3-29.6 1.2-25.5 2.5-50.7 9.6-73.9 20.5-19.9 9.4-38.4 21.6-54.8 36.2-16.4 14.6-30.7 31.6-42.2 50.3-12.7 20.8-22.2 43.5-27.4 67.3-4.2 19-6.2 38.6-5.2 58.1.9 18.9 3.8 37.8 9.5 55.9 3.6 11.5 7.9 22.7 13.3 33.6 5.3 10.7 11.5 21 18.4 30.7 13.8 19.3 30.6 36.4 49.8 50.5 19.6 14.5 41.7 25.7 64.9 33.1 24.2 7.7 49.9 11.3 75.3 10.4 24.8-.8 49.4-5.6 72.6-14.5 22.3-8.6 43.2-20.9 61.5-36.3 9.2-7.8 17.4-16.6 25.1-25.9 7.8-9.4 14.8-19.3 20.6-30 5-9.2 9.2-18.8 12.8-28.5 1.8-4.8 3.5-9.6 4.9-14.6 1.5-5.3 2.6-10.8 3.6-16.2 1.5-8.5 2.1-17.3 1.3-25.9-.7 3.8-1.3 7.5-2.2 11.2-1.1 4.3-2.5 8.5-4.1 12.6-3.2 8.7-7.2 17.1-11 25.5-4.9 10.7-10.6 20.9-16.8 30.8-3.2 5.1-6.5 10.1-10.1 14.9-3.6 4.8-7.7 9.4-11.8 13.9-8.2 9.1-17.1 17.2-27 24.4-10.1 7.4-20.8 13.9-32.1 19.3-22.6 11-47.3 17.6-72.3 19.8-25.6 2.2-51.7-.3-76.3-7.6-23.4-6.9-45.6-18.1-65.1-32.8-18.9-14.3-35.3-31.9-48.2-51.8C75.4 347.8 66.1 324.9 61 301c-1.3-6.2-2.3-12.6-3-18.9-.6-5.4-1.1-10.9-1.3-16.4-.3-11.3.4-23 2.1-34.2 3.7-24.6 11.7-48.3 24.1-69.9 11-19.3 25.3-36.7 42.1-51.4 16.8-14.8 36-26.7 56.8-35.1 12-4.9 24.6-8.5 37.4-10.9 6.5-1.2 13-2.2 19.5-2.7 3.2-.3 6.3-.3 9.5-.6 1.3 0 2.6.1 3.9.1 21.7-.4 43.5 2.4 64.2 8.9 22.3 7 43.3 18.3 61.5 33 19.1 15.4 35 34.4 47 55.8 10.2 18.2 17.5 37.8 21.9 58.2 1 4.7 1.8 9.4 2.6 14.1.7 4.3 3.1 8.3 6.8 10.7 7.8 5.2 18.7 1.7 22.5-6.7 1.3-2.9 1.7-6 1.2-8.9z"
+                              }
+                            })
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c("div", {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value: !_vm.waitBarChart,
+                              expression: "!waitBarChart"
+                            }
+                          ],
+                          staticClass:
+                            "w-full h-full border-2 border-gray-600 dark:border-gray-300  bg-white dark:bg-dark-secondary flex items-center justify-center",
+                          attrs: { id: "container" }
+                        })
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "absolute w-full h-full bottom-0 right-0 flex items-center px-4 py-2 justify-center",
+                        class: _vm.showPie ? "z-10" : "z-0 opacity-0"
+                      },
+                      [
+                        _c("div", {
+                          staticClass:
+                            "w-full h-full border-2 border-gray-600 dark:border-gray-300  bg-white dark:bg-dark-secondary flex items-center justify-center",
+                          attrs: { id: "pie-container" }
+                        })
+                      ]
+                    )
+                  ])
+                ]
               )
             ]
           )
@@ -36819,14 +37182,14 @@ var render = function() {
               _c(
                 "div",
                 { staticClass: "w-full flex justify-evenly my-1" },
-                _vm._l(_vm.currentPeriod, function(i) {
+                _vm._l(_vm.currentPeriod, function(i, index) {
                   return _c(
                     "button",
                     {
                       staticClass: "focus:outline-none",
                       on: {
                         click: function($event) {
-                          return _vm.ChangeMap(i)
+                          return _vm.ChangeMap(i, index)
                         }
                       }
                     },

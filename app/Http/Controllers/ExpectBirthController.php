@@ -11,6 +11,8 @@ class ExpectBirthController extends Controller
     public function get(){
         $periods=ExpectBirth::distinct()->get(['period'])->shuffle()->take(5);
         $years=[];
+        $gender_data=[];
+        $genders=['Both sexes','male','female'];
         foreach ($periods->sortDesc() as $period){
             $years[]=$period->period;
         }
@@ -31,6 +33,25 @@ class ExpectBirthController extends Controller
                     $array[]=null;
                 }
             }
+            $j=0;
+            foreach ($genders as $gender){
+                $array1=[];
+                foreach ($countries as $country){
+                    $temp1=ExpectBirth::where(['location'=>$country,'period'=>$year,'gender'=>$gender])->first();
+                    if($temp1!==null){
+                        $array1[]=(float)$temp1->Tooltip;
+                    }
+                    else{
+                        $array1[]=null;
+                    }
+                }
+                $gender_data[$year][$j]=[
+                    'name'=> $gender,
+                    'connectNulls'=>true,
+                    'data'=>$array1
+                ];
+                $j++;
+            }
 
             $formatted_countries[$i]=[
                 'name'=>$year,
@@ -44,6 +65,7 @@ class ExpectBirthController extends Controller
             'categories'=>$countries,
             'name'=>'ToolTip',
             'years'=>$years,
+            'gender_data'=>$gender_data
         ];
     }
     public function import(Request $req){

@@ -18,19 +18,42 @@ class DoctorController extends Controller
             "Lao People's Democratic Republic",'Malaysia','Myanmar'
             ,'Philippines','Singapore','Thailand','Viet Nam'];
         $formatted_countries=[];
+        $pie_drillDown=[];
+        $pie_name=[];
         $i=0;
         foreach($years as $year){
+            $total=0;
             $array=[];
+            $pie_data=[];
             foreach ($countries as $country){
                 $temp=Doctor::where(['location'=>$country,'period'=>$year])->first();
                 if($temp!==null){
                     $array[]= (float)$temp->Tooltip;
                     $name=$temp->indicator;
+                     $pie_data[]=[
+                         $country,
+                         (float)$temp->Tooltip
+                     ];
+                     $total+=(float)$temp->Tooltip;
                 }
                 else{
+                    $pie_data[]=[
+                        $country,
+                        null
+                    ];
                     $array[]=null;
                 }
             }
+            $pie_name[]=[
+              'name'=>$year,
+              'y'=>$total,
+              'drilldown'=>$year,
+            ];
+            $pie_drillDown[$i]=[
+                'name'=>$year,
+                'id'=>$year,
+                'data'=>$pie_data,
+            ];
 
             $formatted_countries[$i]=[
                 'name'=>$year,
@@ -44,6 +67,8 @@ class DoctorController extends Controller
             'categories'=>$countries,
             'name'=>'ToolTip',
             'years'=>$years,
+            'pie_series'=>$pie_drillDown,
+            'pie_name'=>$pie_name,
         ];
     }
     public function import(Request $req){

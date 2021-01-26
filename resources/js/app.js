@@ -13,7 +13,8 @@ Highcharts.setOptions({
                }
            }
 })
-
+import drilldown from 'highcharts/modules/drilldown';
+drilldown(Highcharts);
 window.HighMaps=require('highcharts/highmaps.js');
 HighMaps.setOptions({
     chart:{

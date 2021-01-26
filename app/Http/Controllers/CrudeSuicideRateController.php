@@ -18,6 +18,8 @@ class CrudeSuicideRateController extends Controller
             "Lao People's Democratic Republic",'Malaysia','Myanmar'
             ,'Philippines','Singapore','Thailand','Viet Nam'];
         $formatted_countries=[];
+        $gender_data=[];
+        $genders=['Both sexes','male','female'];
         $i=0;
         foreach($years as $year){
             $array=[];
@@ -30,6 +32,25 @@ class CrudeSuicideRateController extends Controller
                 else{
                     $array[]=null;
                 }
+            }
+            $j=0;
+            foreach ($genders as $gender){
+                  $array1=[];
+                foreach ($countries as $country){
+                    $temp1=CrudeSuicideRate::where(['location'=>$country,'period'=>$year,'gender'=>$gender])->first();
+                    if($temp1!==null){
+                        $array1[]=(float)$temp1->Tooltip;
+                    }
+                    else{
+                        $array1[]=null;
+                    }
+                }
+                $gender_data[$year][$j]=[
+                   'name'=> $gender,
+                   'connectNulls'=>true,
+                   'data'=>$array1
+                ];
+                $j++;
             }
 
             $formatted_countries[$i]=[
@@ -44,6 +65,7 @@ class CrudeSuicideRateController extends Controller
             'categories'=>$countries,
             'name'=>'ToolTip',
             'years'=>$years,
+            'gender_data'=>$gender_data
         ];
     }
     public function import(Request $req){
