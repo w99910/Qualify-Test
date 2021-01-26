@@ -408,12 +408,13 @@ name: "Home",
           this.pageLoading=false;
           let data = await axios.post('crude_rates').then(async(res)=> {
 
-              this.CrudeRate.name=res.data.name;
-              this.CrudeRate.data=res.data.data;
-              this.CrudeRate.title=res.data.title;
-              this.CrudeRate.categories=res.data.categories;
-              this.CrudeRate.years=res.data.years;
-              this.CrudeRate.genderData=res.data.gender_data;
+              this.CrudeRate.name=await res.data.name;
+              this.CrudeRate.data=await res.data.data;
+              this.CrudeRate.title=await res.data.title;
+              this.CrudeRate.categories=await res.data.categories;
+              this.CrudeRate.years=await res.data.years;
+              this.CrudeRate.genderData=await res.data.gender_data;
+              console.log(this.CrudeRate.genderData);
               this.CrudeRate.mapData=await this.ProcessMapChart(this.CrudeRate.data);
               this.currentPeriod=this.CrudeRate.years;
               this.currentYear=await this.currentPeriod[0];
@@ -421,18 +422,21 @@ name: "Home",
           });
           return 'finish';
          },
-        ProcessExpectBirth(){
-           axios.post('expect_births').then(async(res)=> {
-               this.ExpectBirth.name=res.data.name;
-               this.ExpectBirth.data=res.data.data;
-               this.ExpectBirth.title=res.data.title;
-               this.ExpectBirth.categories=res.data.categories;
-               this.ExpectBirth.genderData=res.data.gender_data;
-               this.ExpectBirth.years=res.data.years.reverse();
+       async ProcessExpectBirth(){
+          let data = await axios.post('expect_births').then(async(res)=> {
+               this.ExpectBirth.name=await res.data.name;
+               this.ExpectBirth.data=await res.data.data;
+               this.ExpectBirth.title=await res.data.title;
+               this.ExpectBirth.categories=await res.data.categories;
+               this.ExpectBirth.genderData=await res.data.gender_data;
+              console.log(this.ExpectBirth.genderData);
+
+              this.ExpectBirth.years=await res.data.years.reverse();
                this.ExpectBirth.mapData=await this.ProcessMapChart(this.ExpectBirth.data);
 
                return 'finish';
            });
+          return data;
         },
        async ProcessDoctor() {
 
