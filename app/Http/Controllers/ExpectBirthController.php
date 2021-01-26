@@ -12,7 +12,7 @@ class ExpectBirthController extends Controller
         $periods=ExpectBirth::distinct()->get(['period'])->shuffle()->take(5);
         $years=[];
         $gender_data=[];
-        $genders=['Both sexes','male','female'];
+        $genders=['Both sexes','Male','Female'];
         foreach ($periods->sortDesc() as $period){
             $years[]=$period->period;
         }

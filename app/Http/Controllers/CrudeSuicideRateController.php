@@ -19,7 +19,7 @@ class CrudeSuicideRateController extends Controller
             ,'Philippines','Singapore','Thailand','Viet Nam'];
         $formatted_countries=[];
         $gender_data=[];
-        $genders=['Both sexes','male','female'];
+        $genders=['Both sexes','Male','Female'];
         $i=0;
         foreach($years as $year){
             $array=[];
